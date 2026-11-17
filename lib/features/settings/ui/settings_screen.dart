@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pocketstrike/app/router.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/app/theme/theme_controller.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/features/settings/ui/personas_sheet.dart';
+import 'package:sarathi/app/router.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/app/theme/theme_controller.dart';
+import 'package:sarathi/core/localization/language_provider.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/features/settings/ui/personas_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Main settings menu grouping all app configurations into sleek glass tiles.
@@ -46,10 +47,13 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final tokens = context.glass;
+
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'Settings',
+          ref.t('settings'),
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -59,108 +63,234 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         children: [
-          const _SectionHeader(title: 'AI & ENGINE'),
+          _SectionHeader(title: ref.t('aiEngine')),
           _SettingsTile(
             icon: AppIcons.download,
-            title: 'Local & Offline Models',
-            subtitle: 'Import GGUF LLMs, image models & load to RAM',
+            title: ref.t('localModels'),
+            subtitle: ref.t('localModelsSub'),
             onTap: () => context.push(AppRoutes.settingsLocalModels),
           ),
           _SettingsTile(
             icon: AppIcons.cpu,
-            title: 'AI Providers',
-            subtitle: 'OpenAI, Claude, Gemini, Groq, Ollama keys',
+            title: ref.t('aiProviders'),
+            subtitle: ref.t('aiProvidersSub'),
             onTap: () => context.push(AppRoutes.settingsProviders),
           ),
           _SettingsTile(
             icon: AppIcons.brain,
-            title: 'System Personas',
-            subtitle: 'General, Coding, Research & custom AI personas',
+            title: ref.t('personas'),
+            subtitle: ref.t('personasSub'),
             onTap: () => PersonasSheet.show(context),
           ),
           _SettingsTile(
             icon: AppIcons.sparkles,
-            title: 'Hermes Self-Evolving Agent',
-            subtitle: 'USER.md, MEMORY.md, SOUL.md & adaptive persona',
+            title: ref.t('hermes'),
+            subtitle: ref.t('hermesSub'),
             onTap: () => context.push(AppRoutes.settingsHermes),
           ),
           _SettingsTile(
             icon: AppIcons.sliders,
-            title: 'Model & Parameters',
-            subtitle: 'Temperature, top_p, max tokens, system prompt',
+            title: ref.t('modelParams'),
+            subtitle: ref.t('modelParamsSub'),
             onTap: () => context.push(AppRoutes.settingsModels),
           ),
           _SettingsTile(
             icon: AppIcons.plug,
-            title: 'MCP Servers',
-            subtitle: 'Model Context Protocol servers & safety rules',
+            title: ref.t('mcpServers'),
+            subtitle: ref.t('mcpServersSub'),
             onTap: () => context.push(AppRoutes.settingsMcp),
           ),
           _SettingsTile(
             icon: AppIcons.wrench,
-            title: 'Agent Tools & Capabilities',
-            subtitle: 'Filesystem, web search, calculator, code sandbox',
+            title: ref.t('agentTools'),
+            subtitle: ref.t('agentToolsSub'),
             onTap: () => context.push('/settings/tools'),
           ),
 
           const SizedBox(height: 12),
-          const _SectionHeader(title: 'INTEGRATIONS & STORAGE'),
+          _SectionHeader(title: ref.t('integrationsStorage')),
           _SettingsTile(
             icon: AppIcons.send,
-            title: 'Telegram Bridge',
-            subtitle: 'Bot token & allowed Chat ID relay',
+            title: ref.t('telegramBridge'),
+            subtitle: ref.t('telegramBridgeSub'),
             onTap: () => context.push('/settings/telegram'),
           ),
           _SettingsTile(
             icon: AppIcons.folder,
-            title: 'Storage & Permissions',
-            subtitle: 'SAF root folders & safety confirmation policy',
+            title: ref.t('storagePerms'),
+            subtitle: ref.t('storagePermsSub'),
             onTap: () => context.push('/settings/storage'),
           ),
           _SettingsTile(
             icon: AppIcons.brain,
-            title: 'Memory & Context',
-            subtitle: 'Context window turns size & local RAG store',
+            title: ref.t('memoryContext'),
+            subtitle: ref.t('memoryContextSub'),
             onTap: () => context.push('/settings/memory'),
           ),
           _SettingsTile(
             icon: AppIcons.sparkles,
-            title: 'Scheduled Tasks & Cron Jobs',
-            subtitle: 'Active reminders, recurring cron tasks & background automation',
+            title: ref.t('scheduledTasks'),
+            subtitle: ref.t('scheduledTasksSub'),
             onTap: () => context.push(AppRoutes.settingsTasks),
           ),
 
           const SizedBox(height: 12),
-          const _SectionHeader(title: 'PREFERENCES & SYSTEM'),
+          _SectionHeader(title: ref.t('preferencesSystem')),
+
           // Single-line 3-button Theme Selector (Dark / Light / System)
           const _ThemeModeRow(),
           const SizedBox(height: 2),
 
           _SettingsTile(
             icon: AppIcons.phoneInHand,
-            title: 'Data & About',
-            subtitle: 'Built by Mohd Abuzar · Export chat history or wipe data',
+            title: ref.t('dataAbout'),
+            subtitle: ref.t('dataAboutSub'),
             onTap: () => context.push('/settings/about'),
           ),
 
           const SizedBox(height: 12),
-          const _SectionHeader(title: 'COMMUNITY & DEVELOPER'),
-          _SettingsTile(
-            customLeading: const _YouTubeLogo(),
-            title: 'Thevoidkernel youtube',
-            subtitle: 'https://www.youtube.com/@thevoidkernel',
-            onTap: () =>
-                _openUrl(context, 'https://www.youtube.com/@thevoidkernel'),
-          ),
-          _SettingsTile(
-            customLeading: const _GitHubLogo(),
-            title: 'Built by Mohd Abuzar',
-            subtitle: 'https://github.com/AbuZar-Ansarii',
-            onTap: () =>
-                _openUrl(context, 'https://github.com/AbuZar-Ansarii'),
+          _SectionHeader(title: ref.t('communityDeveloper')),
+
+          // Developer NoishiXzen Card with Compact Icons (Hidden Raw Links)
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: tokens.glassColor,
+              borderRadius: BorderRadius.circular(tokens.radiusSm),
+              border: Border.all(color: tokens.glassBorder, width: 0.8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: tokens.accent.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: tokens.accent.withValues(alpha: 0.35),
+                          width: 0.8,
+                        ),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.verified_user_rounded,
+                          color: tokens.accent,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            ref.t('developedBy'),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            ref.t('developedByDesc'),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: tokens.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Divider(height: 1),
+                const SizedBox(height: 12),
+
+                // Icon buttons for small space (icon-only to avoid overflow)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _CompactLinkButton(
+                      icon: Icons.code_rounded,
+                      tooltip: 'GitHub: pushpajit-dev',
+                      color: tokens.accent,
+                      onTap: () =>
+                          _openUrl(context, 'https://github.com/pushpajit-dev'),
+                    ),
+                    _CompactLinkButton(
+                      icon: Icons.public_rounded,
+                      tooltip: 'Website: aivorygen.netlify.app',
+                      color: const Color(0xFF00D2FF),
+                      onTap: () =>
+                          _openUrl(context, 'https://aivorygen.netlify.app'),
+                    ),
+                    _CompactLinkButton(
+                      icon: Icons.chat_bubble_rounded,
+                      tooltip: 'Discord: Join Server',
+                      color: const Color(0xFF5865F2),
+                      onTap: () =>
+                          _openUrl(context, 'https://discord.gg/Dcg2GreJ'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
         ],
+      ),
+    );
+  }
+}
+
+class _CompactLinkButton extends StatelessWidget {
+  const _CompactLinkButton({
+    required this.icon,
+    required this.tooltip,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onTap,
+          child: Container(
+            width: 48,
+            height: 42,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: color.withValues(alpha: 0.35),
+                width: 0.8,
+              ),
+            ),
+            child: Center(
+              child: Icon(icon, size: 19, color: color),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -188,7 +318,7 @@ class _ThemeModeRow extends ConsumerWidget {
           _buildThemeBtn(
             context,
             ref,
-            label: 'Dark',
+            label: ref.t('themeDark'),
             icon: AppIcons.moon,
             mode: ThemeMode.dark,
             currentMode: currentMode,
@@ -197,7 +327,7 @@ class _ThemeModeRow extends ConsumerWidget {
           _buildThemeBtn(
             context,
             ref,
-            label: 'Light',
+            label: ref.t('themeLight'),
             icon: AppIcons.sun,
             mode: ThemeMode.light,
             currentMode: currentMode,
@@ -206,7 +336,7 @@ class _ThemeModeRow extends ConsumerWidget {
           _buildThemeBtn(
             context,
             ref,
-            label: 'System',
+            label: ref.t('themeSystem'),
             icon: AppIcons.smartphone,
             mode: ThemeMode.system,
             currentMode: currentMode,
@@ -298,14 +428,12 @@ class _SectionHeader extends StatelessWidget {
 class _SettingsTile extends StatelessWidget {
   const _SettingsTile({
     this.icon,
-    this.customLeading,
     required this.title,
     required this.subtitle,
     required this.onTap,
   });
 
   final IconData? icon;
-  final Widget? customLeading;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
@@ -330,22 +458,19 @@ class _SettingsTile extends StatelessWidget {
             ),
             child: Row(
               children: [
-                if (customLeading != null)
-                  customLeading!
-                else
-                  Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: tokens.accent.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: tokens.accent.withValues(alpha: 0.25),
-                        width: 0.8,
-                      ),
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: tokens.accent.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: tokens.accent.withValues(alpha: 0.25),
+                      width: 0.8,
                     ),
-                    child: Icon(icon, color: tokens.accent, size: 16),
                   ),
+                  child: Icon(icon, color: tokens.accent, size: 16),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -372,6 +497,7 @@ class _SettingsTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
+
                 Icon(
                   AppIcons.chevronRight,
                   size: 14,
@@ -380,71 +506,6 @@ class _SettingsTile extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _YouTubeLogo extends StatelessWidget {
-  const _YouTubeLogo();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: const Color(0xFFFF0000).withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: const Color(0xFFFF0000).withValues(alpha: 0.35),
-          width: 0.8,
-        ),
-      ),
-      child: Center(
-        child: Container(
-          width: 18,
-          height: 13,
-          decoration: BoxDecoration(
-            color: const Color(0xFFFF0000),
-            borderRadius: BorderRadius.circular(3),
-          ),
-          child: const Center(
-            child: Icon(
-              Icons.play_arrow_rounded,
-              size: 10,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _GitHubLogo extends StatelessWidget {
-  const _GitHubLogo();
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.glass;
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: tokens.accent.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: tokens.accent.withValues(alpha: 0.25),
-          width: 0.8,
-        ),
-      ),
-      child: Center(
-        child: Icon(
-          Icons.code_rounded,
-          color: tokens.accent,
-          size: 16,
         ),
       ),
     );

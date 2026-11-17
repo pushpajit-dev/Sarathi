@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:pocketstrike/features/agent/domain/agent_tool.dart';
+import 'package:sarathi/features/agent/domain/agent_tool.dart';
 
 /// Document Converter & Text Extraction Tools.
 class DocumentAgentTools {
@@ -61,7 +61,7 @@ class DocumentAgentTools {
         run: (args) async {
           final title = args['title'] as String? ?? 'Document';
           final body = args['body'] as String? ?? '';
-          return '# $title\n\n$body\n\n---\n*Formatted by PocketStrike Document Agent*';
+          return '# $title\n\n$body\n\n---\n*Formatted by Sarathi Document Agent*';
         },
       );
 }

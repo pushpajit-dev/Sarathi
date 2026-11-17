@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/core/services/notification_service.dart';
-import 'package:pocketstrike/core/storage/prefs_provider.dart';
-import 'package:pocketstrike/features/agent/domain/agent_tool.dart';
-import 'package:pocketstrike/features/chat/application/chat_controller.dart';
-import 'package:pocketstrike/features/telegram/telegram_service.dart';
+import 'package:sarathi/core/services/notification_service.dart';
+import 'package:sarathi/core/storage/prefs_provider.dart';
+import 'package:sarathi/features/agent/domain/agent_tool.dart';
+import 'package:sarathi/features/chat/application/chat_controller.dart';
+import 'package:sarathi/features/telegram/telegram_service.dart';
 
 enum CronTaskType { oneShot, recurring }
 

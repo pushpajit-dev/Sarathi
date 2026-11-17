@@ -3,22 +3,22 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/theme_controller.dart';
-import 'package:pocketstrike/core/db/app_database.dart';
-import 'package:pocketstrike/core/models/chat_models.dart';
-import 'package:pocketstrike/features/agent/data/agent_engine.dart';
-import 'package:pocketstrike/features/agent/data/hermes_memory_store.dart';
-import 'package:pocketstrike/features/agent/domain/agent_event.dart';
-import 'package:pocketstrike/features/agent/domain/agent_tool.dart';
-import 'package:pocketstrike/features/conversations/application/conversations_controller.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_engine.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_info.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_store.dart';
-import 'package:pocketstrike/features/providers/application/providers_controller.dart';
-import 'package:pocketstrike/features/providers/data/mock_provider.dart';
-import 'package:pocketstrike/features/providers/domain/ai_provider.dart';
-import 'package:pocketstrike/features/providers/domain/provider_types.dart';
-import 'package:pocketstrike/shared/widgets/confirm_action_sheet.dart';
+import 'package:sarathi/app/theme/theme_controller.dart';
+import 'package:sarathi/core/db/app_database.dart';
+import 'package:sarathi/core/models/chat_models.dart';
+import 'package:sarathi/features/agent/data/agent_engine.dart';
+import 'package:sarathi/features/agent/data/hermes_memory_store.dart';
+import 'package:sarathi/features/agent/domain/agent_event.dart';
+import 'package:sarathi/features/agent/domain/agent_tool.dart';
+import 'package:sarathi/features/conversations/application/conversations_controller.dart';
+import 'package:sarathi/features/local_models/data/local_model_engine.dart';
+import 'package:sarathi/features/local_models/data/local_model_info.dart';
+import 'package:sarathi/features/local_models/data/local_model_store.dart';
+import 'package:sarathi/features/providers/application/providers_controller.dart';
+import 'package:sarathi/features/providers/data/mock_provider.dart';
+import 'package:sarathi/features/providers/domain/ai_provider.dart';
+import 'package:sarathi/features/providers/domain/provider_types.dart';
+import 'package:sarathi/shared/widgets/confirm_action_sheet.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
@@ -775,7 +775,7 @@ class ChatController extends StateNotifier<ChatState> {
           ? hermesContext
           : '$systemPrompt\n\n$hermesContext';
     } else if (systemPrompt.isEmpty) {
-      systemPrompt = 'You are PocketStrike AI, a helpful, intelligent, and concise assistant.';
+      systemPrompt = 'You are Sarathi AI, a helpful, intelligent, and concise assistant.';
     }
 
     if (state.agentMode) {

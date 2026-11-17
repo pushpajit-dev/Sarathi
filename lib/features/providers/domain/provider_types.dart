@@ -122,6 +122,29 @@ extension ProviderTypeX on ProviderType {
           true,
         _ => false,
       };
+
+  /// Direct web portal for registration & getting API key via browser.
+  String? get portalUrl => switch (this) {
+        ProviderType.gemini => 'https://aistudio.google.com/app/apikey',
+        ProviderType.anthropic => 'https://console.anthropic.com/settings/keys',
+        ProviderType.openai => 'https://platform.openai.com/api-keys',
+        ProviderType.groq => 'https://console.groq.com/keys',
+        ProviderType.openrouter => 'https://openrouter.ai/keys',
+        ProviderType.ollama => 'https://ollama.com',
+        ProviderType.opencode => 'https://opencode.ai',
+        ProviderType.nvidia => 'https://build.nvidia.com',
+        _ => null,
+      };
+
+  String? get portalTitle => switch (this) {
+        ProviderType.gemini => 'Google AI Studio / Gemini Key Portal',
+        ProviderType.anthropic => 'Anthropic Claude Console',
+        ProviderType.openai => 'OpenAI Platform / Codex Keys',
+        ProviderType.groq => 'Groq Cloud Console',
+        ProviderType.openrouter => 'OpenRouter Keys',
+        ProviderType.ollama => 'Ollama Official Site',
+        _ => null,
+      };
 }
 
 /// A normalized tool spec handed to providers; each client formats it into

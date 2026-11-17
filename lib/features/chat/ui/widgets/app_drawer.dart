@@ -4,15 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pocketstrike/app/router.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/app_logo.dart';
-import 'package:pocketstrike/features/agent/data/cron_task_store.dart';
-import 'package:pocketstrike/features/conversations/application/conversations_controller.dart';
-import 'package:pocketstrike/features/gallery/application/gallery_controller.dart';
-import 'package:pocketstrike/features/providers/application/providers_controller.dart';
-import 'package:pocketstrike/features/mcp/ui/connect_mcp_sheet.dart';
+import 'package:sarathi/app/router.dart';
+import 'package:sarathi/core/localization/language_provider.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/app_logo.dart';
+import 'package:sarathi/features/agent/data/cron_task_store.dart';
+import 'package:sarathi/features/conversations/application/conversations_controller.dart';
+import 'package:sarathi/features/gallery/application/gallery_controller.dart';
+import 'package:sarathi/features/providers/application/providers_controller.dart';
+import 'package:sarathi/features/mcp/ui/connect_mcp_sheet.dart';
 import 'conversation_list.dart';
 
 /// Sidebar: compact new chat pill, searchable grouped history,
@@ -112,7 +113,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'PocketStrike',
+                          ref.watch(currentAppNameProvider),
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
@@ -196,7 +197,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Tasks & Reminders',
+                                  ref.t('tasksAndReminders'),
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.w600,
@@ -259,7 +260,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'AI Image Gallery',
+                                  ref.t('aiImageGallery'),
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.w600,
@@ -311,9 +312,9 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                             .bodyMedium
                             ?.copyWith(fontSize: 12),
                         decoration: InputDecoration(
-                          hintText: 'Search chats',
+                          hintText: ref.t('searchChats'),
                           hintStyle: TextStyle(
-                              color: tokens.textSecondary, fontSize: 11.5),
+                              color: tokens.textSecondary, fontSize: 11.5, letterSpacing: -0.1),
                           prefixIcon: Icon(AppIcons.search,
                               size: 14, color: tokens.textSecondary),
                           contentPadding:

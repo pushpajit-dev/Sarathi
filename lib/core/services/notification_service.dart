@@ -51,8 +51,8 @@ class LocalNotificationService {
       await init();
 
       const androidDetails = AndroidNotificationDetails(
-        'pocketstrike_reminders_channel',
-        'PocketStrike Reminders & Tasks',
+        'sarathi_reminders_channel',
+        'Sarathi Reminders & Tasks',
         channelDescription:
             'Local OS notifications for scheduled agent reminders and cron tasks.',
         importance: Importance.max,
@@ -83,7 +83,7 @@ class LocalNotificationService {
       await init();
 
       final androidDetails = AndroidNotificationDetails(
-        'pocketstrike_downloads_channel',
+        'sarathi_downloads_channel',
         'Model Downloads',
         channelDescription:
             'Download progress notifications for offline AI models.',

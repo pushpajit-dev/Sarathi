@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/features/conversations/application/conversations_controller.dart';
-import 'package:pocketstrike/features/mcp/application/mcp_controller.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/features/conversations/application/conversations_controller.dart';
+import 'package:sarathi/features/mcp/application/mcp_controller.dart';
 
 /// AppBar icon menu allowing the user to toggle which connected MCP
 /// servers supply tools to the current conversation.

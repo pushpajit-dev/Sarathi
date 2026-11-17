@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/app/theme/theme_controller.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/app/theme/theme_controller.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
 
 /// Screen allowing the user to select Dark, Light, or System mode.
 class AppearanceSettingsScreen extends ConsumerWidget {

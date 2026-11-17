@@ -1,9 +1,10 @@
+import 'package:sarathi/core/localization/language_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/glass_button.dart';
-import 'package:pocketstrike/features/agent/data/hermes_memory_store.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/glass_button.dart';
+import 'package:sarathi/features/agent/data/hermes_memory_store.dart';
 
 class HermesEvolutionScreen extends ConsumerStatefulWidget {
   const HermesEvolutionScreen({super.key});
@@ -79,18 +80,16 @@ class _HermesEvolutionScreenState
               final confirmed = await showDialog<bool>(
                 context: context,
                 builder: (dialogCtx) => AlertDialog(
-                  title: const Text('Reset Evolution Memory?'),
-                  content: const Text(
-                    'This will reset USER.md, MEMORY.md, and SOUL.md to default clean states.',
-                  ),
+                  title: Text(dialogCtx.t('resetMemoryTitle')),
+                  content: Text(dialogCtx.t('resetMemoryMsg')),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(dialogCtx, false),
-                      child: const Text('Cancel'),
+                      child: Text(dialogCtx.t('cancel')),
                     ),
                     FilledButton(
                       onPressed: () => Navigator.pop(dialogCtx, true),
-                      child: const Text('Reset'),
+                      child: Text(dialogCtx.t('reset')),
                     ),
                   ],
                 ),

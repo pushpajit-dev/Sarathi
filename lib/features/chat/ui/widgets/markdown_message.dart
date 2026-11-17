@@ -6,10 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:path_provider/path_provider.dart';
-import 'package:pocketstrike/app/theme/app_theme.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/code_block.dart';
+import 'package:sarathi/app/theme/app_theme.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/code_block.dart';
 
 /// Renders assistant/user text as markdown with glass code blocks and local image rendering.
 class MarkdownMessage extends StatelessWidget {
@@ -435,7 +435,7 @@ class _InteractiveImageCard extends StatelessWidget {
         bytes = Uint8List.fromList(response.data!);
       }
 
-      final fileName = 'PocketStrike_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final fileName = 'Sarathi_${DateTime.now().millisecondsSinceEpoch}.jpg';
       bool savedNative = false;
 
       // 1. Android Native MediaStore save (instantly visible in Gallery / Google Photos)
@@ -456,8 +456,8 @@ class _InteractiveImageCard extends StatelessWidget {
 
       // 2. Physical File backup in standard media directories
       final candidateDirs = [
-        Directory('/storage/emulated/0/Pictures/PocketStrike'),
-        Directory('/storage/emulated/0/DCIM/PocketStrike'),
+        Directory('/storage/emulated/0/Pictures/Sarathi'),
+        Directory('/storage/emulated/0/DCIM/Sarathi'),
         Directory('/storage/emulated/0/Download'),
       ];
 
@@ -509,7 +509,7 @@ class _InteractiveImageCard extends StatelessWidget {
                       ),
                       SizedBox(height: 2),
                       Text(
-                        'Album: Pictures / PocketStrike',
+                        'Album: Pictures / Sarathi',
                         style: TextStyle(fontSize: 11, color: Colors.white70),
                       ),
                     ],
@@ -543,7 +543,7 @@ class _InteractiveImageCard extends StatelessWidget {
         const channel = MethodChannel('com.pocketstrike.app/gallery');
         await channel.invokeMethod('shareImage', {
           'filePath': file.absolute.path,
-          'text': 'Created with PocketStrike AI',
+          'text': 'Created with Sarathi AI',
         });
       }
     } catch (e) {

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/core/storage/prefs_provider.dart';
-import 'package:pocketstrike/core/storage/secure_keys.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/glass_button.dart';
-import 'package:pocketstrike/shared/widgets/status_dot.dart';
-import 'package:pocketstrike/features/telegram/telegram_service.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/core/storage/prefs_provider.dart';
+import 'package:sarathi/core/storage/secure_keys.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/glass_button.dart';
+import 'package:sarathi/shared/widgets/status_dot.dart';
+import 'package:sarathi/features/telegram/telegram_service.dart';
 
 class TelegramSettingsScreen extends ConsumerStatefulWidget {
   const TelegramSettingsScreen({super.key});
@@ -104,7 +104,7 @@ class _TelegramSettingsScreenState
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Connect a Telegram Bot token to query PocketStrike remotely. '
+                  'Connect a Telegram Bot token to query Sarathi remotely. '
                   'Only messages from your allowed Chat ID will be processed.',
                   style: TextStyle(color: tokens.textSecondary),
                 ),
@@ -237,8 +237,8 @@ class _TelegramSettingsScreenState
                 Text(
                   '• Send /start or /id on Telegram to get your Chat ID.\n'
                   '• Send /ping to check agent connectivity.\n'
-                  '• Send any question or coding task and PocketStrike processes it with your active AI provider.\n'
-                  '• For 24/7 reliability on Android, set Battery Usage for PocketStrike to "Unrestricted" in Android App Settings.',
+                  '• Send any question or coding task and Sarathi processes it with your active AI provider.\n'
+                  '• For 24/7 reliability on Android, set Battery Usage for Sarathi to "Unrestricted" in Android App Settings.',
                   style: TextStyle(
                     fontSize: 11,
                     height: 1.45,

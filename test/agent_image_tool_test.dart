@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pocketstrike/features/agent/data/extra_agent_tools.dart';
+import 'package:sarathi/features/agent/data/extra_agent_tools.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

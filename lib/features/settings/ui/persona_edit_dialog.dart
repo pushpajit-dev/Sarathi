@@ -1,8 +1,9 @@
+import 'package:sarathi/core/localization/language_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/core/db/app_database.dart' show Persona;
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/features/conversations/application/conversations_controller.dart';
+import 'package:sarathi/core/db/app_database.dart' show Persona;
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/features/conversations/application/conversations_controller.dart';
 
 class PersonaEditDialog extends ConsumerStatefulWidget {
   const PersonaEditDialog({super.key, this.persona});
@@ -65,7 +66,7 @@ class _PersonaEditDialogState extends ConsumerState<PersonaEditDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.persona == null ? 'New Persona' : 'Edit Persona'),
+      title: Text(widget.persona == null ? ref.t('newPersona') : ref.t('editPersona')),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -77,9 +78,11 @@ class _PersonaEditDialogState extends ConsumerState<PersonaEditDialog> {
                   child: TextField(
                     controller: _iconController,
                     textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 13.5),
                     decoration: const InputDecoration(
                       labelText: 'Icon',
                       border: OutlineInputBorder(),
+                      hintStyle: TextStyle(fontSize: 12),
                     ),
                   ),
                 ),
@@ -87,10 +90,12 @@ class _PersonaEditDialogState extends ConsumerState<PersonaEditDialog> {
                 Expanded(
                   child: TextField(
                     controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Persona Name',
+                    style: const TextStyle(fontSize: 13.5),
+                    decoration: InputDecoration(
+                      labelText: ref.t('personaName'),
                       hintText: 'e.g. Python Expert',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
+                      hintStyle: const TextStyle(fontSize: 12),
                     ),
                   ),
                 ),
@@ -101,10 +106,12 @@ class _PersonaEditDialogState extends ConsumerState<PersonaEditDialog> {
               controller: _promptController,
               minLines: 3,
               maxLines: 6,
-              decoration: const InputDecoration(
-                labelText: 'System Prompt Instructions',
-                hintText: 'You are an expert Python engineer...',
-                border: OutlineInputBorder(),
+              style: const TextStyle(fontSize: 13.5),
+              decoration: InputDecoration(
+                labelText: ref.t('systemPrompt'),
+                hintText: 'You are an expert engineer...',
+                border: const OutlineInputBorder(),
+                hintStyle: const TextStyle(fontSize: 12),
               ),
             ),
           ],
@@ -113,11 +120,11 @@ class _PersonaEditDialogState extends ConsumerState<PersonaEditDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(ref.t('cancel')),
         ),
         FilledButton.icon(
           icon: const Icon(AppIcons.save, size: 16),
-          label: const Text('Save'),
+          label: Text(ref.t('save')),
           onPressed: _save,
         ),
       ],

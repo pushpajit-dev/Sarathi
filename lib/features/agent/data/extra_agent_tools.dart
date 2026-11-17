@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:pocketstrike/features/agent/domain/agent_tool.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_engine.dart';
+import 'package:sarathi/features/agent/domain/agent_tool.dart';
+import 'package:sarathi/features/local_models/data/local_model_engine.dart';
 
 /// Extra agent tools: Web Search, Code Execution Sandbox, and AI Image Generation.
 class ExtraAgentTools {

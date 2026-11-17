@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Brand palette for PocketStrike.
+/// Brand palette for Sarathi.
 ///
 /// Dark mode uses a green accent on pure OLED black (#000000); light mode swaps
 /// to a blue accent on soft white while keeping identical layout/spacing rules.

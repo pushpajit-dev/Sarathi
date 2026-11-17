@@ -1,3 +1,6 @@
+import 'package:sarathi/features/providers/application/providers_controller.dart';
+import 'package:sarathi/features/providers/domain/provider_types.dart';
+import 'package:sarathi/core/localization/language_provider.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
@@ -5,12 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/core/models/chat_models.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_info.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_store.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/features/chat/application/chat_controller.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/core/models/chat_models.dart';
+import 'package:sarathi/features/local_models/data/local_model_info.dart';
+import 'package:sarathi/features/local_models/data/local_model_store.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/features/chat/application/chat_controller.dart';
 
 /// Glass input bar: attach, text field, interactive mic dictation button, send/stop.
 class ChatInputBar extends ConsumerStatefulWidget {
@@ -61,10 +64,37 @@ class _ChatInputBarState extends ConsumerState<ChatInputBar> {
   }
 
   static String _guessMime(String? ext) => switch (ext?.toLowerCase()) {
-        'png' || 'jpg' || 'jpeg' || 'gif' || 'webp' => 'image/${ext ?? 'png'}',
+        'png' || 'jpg' || 'jpeg' || 'gif' || 'webp' || 'bmp' || 'heic' =>
+          'image/',
+        'mp3' || 'wav' || 'm4a' || 'aac' || 'ogg' || 'flac' =>
+          'audio/',
+        'mp4' || 'mkv' || 'mov' || 'avi' || 'webm' =>
+          'video/',
         'pdf' => 'application/pdf',
         'md' => 'text/markdown',
-        'dart' || 'js' || 'py' || 'java' || 'kt' || 'swift' || 'txt' =>
+        'json' => 'application/json',
+        'csv' => 'text/csv',
+        'txt' ||
+        'dart' ||
+        'js' ||
+        'ts' ||
+        'py' ||
+        'java' ||
+        'kt' ||
+        'swift' ||
+        'c' ||
+        'cpp' ||
+        'h' ||
+        'hpp' ||
+        'go' ||
+        'rs' ||
+        'html' ||
+        'css' ||
+        'xml' ||
+        'yaml' ||
+        'yml' ||
+        'sh' ||
+        'sql' =>
           'text/plain',
         _ => 'application/octet-stream',
       };
@@ -354,12 +384,14 @@ class _ChatInputBarState extends ConsumerState<ChatInputBar> {
     final currentRatio = activeLocal?.aspectRatio ?? '1:1';
     final currentSampler = activeLocal?.sampler ?? 'Euler A';
 
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
     return Container(
-      margin: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      margin: EdgeInsets.fromLTRB(10, 2, 10, bottomInset > 0 ? 2 : 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: tokens.glassColor,
-        borderRadius: BorderRadius.circular(tokens.radiusLg),
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(
           color: _isListening
               ? Colors.redAccent.withValues(alpha: 0.6)
@@ -475,46 +507,59 @@ class _ChatInputBarState extends ConsumerState<ChatInputBar> {
                 ],
               ),
             ),
+          // Supportive Modality Badges
+          _buildModalityBadges(context, tokens),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IconButton(
-                tooltip: 'Attach files',
+                tooltip: 'Attach images, audio or documents',
                 icon: Icon(AppIcons.paperclip,
-                    size: 20, color: tokens.textSecondary),
+                    size: 19, color: tokens.textSecondary),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                padding: EdgeInsets.zero,
                 onPressed: widget.enabled ? _pickFiles : null,
               ),
               Expanded(
-                child: TextField(
-                  controller: _textController,
-                  focusNode: _focusNode,
-                  enabled: widget.enabled && !generating,
-                  minLines: 1,
-                  maxLines: 6,
-                  textInputAction: TextInputAction.newline,
-                  textAlignVertical: TextAlignVertical.center,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  decoration: InputDecoration(
-                    hintText: _isListening
-                        ? 'Listening to your voice…'
-                        : (isLocalImage
-                            ? 'Describe image to generate on-device...'
-                            : (chatState.localMode
-                                ? 'Ask your local GGUF model offline...'
-                                : (widget.enabled
-                                    ? 'Message PocketStrike…'
-                                    : 'Add a provider to start chatting'))),
-                    hintStyle: TextStyle(
-                      color: _isListening
-                          ? Colors.redAccent.withValues(alpha: 0.8)
-                          : tokens.textSecondary,
+                child: CallbackShortcuts(
+                  bindings: {
+                    const SingleActivator(LogicalKeyboardKey.enter): () => _send(),
+                  },
+                  child: TextField(
+                    controller: _textController,
+                    focusNode: _focusNode,
+                    enabled: widget.enabled && !generating,
+                    minLines: 1,
+                    maxLines: 5,
+                    textInputAction: TextInputAction.send,
+                    textAlignVertical: TextAlignVertical.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 13.5,
+                        ),
+                    decoration: InputDecoration(
+                      hintText: _isListening
+                          ? 'Listening…'
+                          : (isLocalImage
+                              ? 'Describe image to generate…'
+                              : (chatState.localMode
+                                  ? 'Ask local GGUF model…'
+                                  : (widget.enabled
+                                      ? ref.t('messageSarathi')
+                                      : 'Add provider to chat'))),
+                      hintStyle: TextStyle(
+                        fontSize: 12.0,
+                        letterSpacing: -0.1,
+                        color: _isListening
+                            ? Colors.redAccent.withValues(alpha: 0.8)
+                            : tokens.textSecondary,
+                      ),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 8),
                     ),
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 4, vertical: 8),
+                    onSubmitted: (_) => _send(),
                   ),
-                  onSubmitted: (_) => _send(),
                 ),
               ),
               // Interactive Microphone Button
@@ -522,11 +567,13 @@ class _ChatInputBarState extends ConsumerState<ChatInputBar> {
                 tooltip: _isListening ? 'Stop listening' : 'Voice input',
                 icon: Icon(
                   AppIcons.mic,
-                  size: 20,
+                  size: 19,
                   color: _isListening
                       ? Colors.redAccent
                       : tokens.textSecondary,
                 ),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                padding: EdgeInsets.zero,
                 onPressed: widget.enabled ? _toggleListening : null,
               ),
               const SizedBox(width: 2),
@@ -537,8 +584,8 @@ class _ChatInputBarState extends ConsumerState<ChatInputBar> {
                     : (widget.enabled ? _send : null),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
-                  width: 38,
-                  height: 38,
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
                     color: generating
                         ? Theme.of(context).colorScheme.error
@@ -559,6 +606,87 @@ class _ChatInputBarState extends ConsumerState<ChatInputBar> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildModalityBadges(BuildContext context, dynamic tokens) {
+    final chatState = ref.watch(chatControllerProvider);
+    final localStore = ref.watch(localModelStoreProvider);
+    final activeLocal = localStore.activeModel;
+    final activeConfig = ref.watch(activeProviderConfigProvider).valueOrNull;
+
+    final badges = <(String, String)>[];
+    if (chatState.localMode) {
+      if (activeLocal?.type == LocalModelType.imageModel) {
+        badges.add(('🎨', 'Image Gen'));
+        badges.add(('📷', '512x512'));
+      } else if (activeLocal?.type == LocalModelType.videoModel) {
+        badges.add(('🎬', 'Video Gen'));
+        badges.add(('⚡', '8GB RAM'));
+      } else if (activeLocal?.type == LocalModelType.audioModel) {
+        badges.add(('🎙️', 'Speech & Audio'));
+        badges.add(('🔊', 'Real-time'));
+      } else {
+        badges.add(('💬', 'GGUF'));
+        badges.add(('📄', 'Docs & Code'));
+      }
+    } else if (chatState.demoMode) {
+      badges.add(('🧪', 'Demo Mode'));
+      badges.add(('🛠️', 'Tools'));
+    } else if (activeConfig != null) {
+      final type = ProviderTypeX.fromId(activeConfig.type);
+      if (type == ProviderType.gemini) {
+        badges.add(('👁️', 'Vision'));
+        badges.add(('🎙️', 'Audio'));
+        badges.add(('📄', 'Docs'));
+        badges.add(('🛠️', 'Tools'));
+      } else if (type == ProviderType.openai || type == ProviderType.anthropic) {
+        badges.add(('👁️', 'Vision'));
+        badges.add(('📄', 'Docs'));
+        badges.add(('🛠️', 'Tools'));
+      } else {
+        badges.add(('📄', 'Docs'));
+        badges.add(('🛠️', 'Tools'));
+      }
+    }
+
+    if (badges.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4, left: 4, right: 4),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+          for (final (icon, label) in badges)
+            Container(
+              margin: const EdgeInsets.only(right: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+              decoration: BoxDecoration(
+                color: tokens.glassBorder.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(icon, style: const TextStyle(fontSize: 9.5)),
+                  const SizedBox(width: 3),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.w600,
+                      color: tokens.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+        ),
       ),
     );
   }

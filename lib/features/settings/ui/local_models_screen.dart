@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_info.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_store.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/glass_card.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/features/local_models/data/local_model_info.dart';
+import 'package:sarathi/features/local_models/data/local_model_store.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/glass_card.dart';
 
 class LocalModelsScreen extends ConsumerStatefulWidget {
   const LocalModelsScreen({super.key});
@@ -16,7 +16,7 @@ class LocalModelsScreen extends ConsumerStatefulWidget {
 
 class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
   String? _expandedModelId;
-  int _selectedFilterIndex = 0; // 0: All, 1: Chat, 2: Image
+  int _selectedFilterIndex = 0; // 0: All, 1: Chat, 2: Image, 3: Video, 4: Audio
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +39,20 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
     final imageModels = state.models
         .where((m) => m.type == LocalModelType.imageModel)
         .toList();
+    final videoModels = state.models
+        .where((m) => m.type == LocalModelType.videoModel)
+        .toList();
+    final audioModels = state.models
+        .where((m) => m.type == LocalModelType.audioModel)
+        .toList();
+
+    final allChatCount = uncensoredModels.length + standardChatModels.length;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
-          'Local & Offline Models',
+          'Local & Edge AI Models',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -114,7 +123,7 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
                 const SizedBox(height: 8),
                 Text(
                   state.models.any((m) => m.isLoadedInRam)
-                      ? '⚡ Active models are loaded into RAM for zero-latency, 100% private execution.'
+                      ? '⚡ Active models run 100% on-device with zero-latency & complete privacy.'
                       : '⚪ No models currently loaded in RAM. Tap "Load into RAM" on any model below.',
                   style: TextStyle(
                     fontSize: 11,
@@ -124,7 +133,7 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
 
           // 2. Import Button
           OutlinedButton.icon(
@@ -157,9 +166,9 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
               }
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
-          // 3. Category Filter Tabs (All / Uncensored / Standard Chat / Image Models)
+          // 3. Category Filter Tabs (All / Chat / Image / Video / Audio)
           Container(
             decoration: BoxDecoration(
               color: tokens.glassColor,
@@ -180,22 +189,29 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
                   const SizedBox(width: 4),
                   _buildFilterTab(
                     index: 1,
-                    label: '🔥 Uncensored (${uncensoredModels.length})',
-                    icon: AppIcons.zap,
-                    tokens: tokens,
-                  ),
-                  const SizedBox(width: 4),
-                  _buildFilterTab(
-                    index: 2,
-                    label: '💬 Standard (${standardChatModels.length})',
+                    label: '💬 Chat ($allChatCount)',
                     icon: AppIcons.messageSquare,
                     tokens: tokens,
                   ),
                   const SizedBox(width: 4),
                   _buildFilterTab(
-                    index: 3,
+                    index: 2,
                     label: '🎨 Image (${imageModels.length})',
                     icon: AppIcons.image,
+                    tokens: tokens,
+                  ),
+                  const SizedBox(width: 4),
+                  _buildFilterTab(
+                    index: 3,
+                    label: '🎬 Video (${videoModels.length})',
+                    icon: Icons.movie_filter_rounded,
+                    tokens: tokens,
+                  ),
+                  const SizedBox(width: 4),
+                  _buildFilterTab(
+                    index: 4,
+                    label: '🎙️ Audio (${audioModels.length})',
+                    icon: Icons.graphic_eq_rounded,
                     tokens: tokens,
                   ),
                 ],
@@ -226,7 +242,7 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
           ],
 
           // 5. 💬 Standard Chat Models Section
-          if (_selectedFilterIndex == 0 || _selectedFilterIndex == 2) ...[
+          if (_selectedFilterIndex == 0 || _selectedFilterIndex == 1) ...[
             _buildSectionHeader(
               title: '💬 STANDARD CHAT & REASONING (${standardChatModels.length})',
               subtitle: 'GGUF LLM models for offline intelligence, text generation & agents.',
@@ -247,7 +263,7 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
           ],
 
           // 6. 🎨 Image Models Section
-          if (_selectedFilterIndex == 0 || _selectedFilterIndex == 3) ...[
+          if (_selectedFilterIndex == 0 || _selectedFilterIndex == 2) ...[
             _buildSectionHeader(
               title: '🎨 IMAGE & DIFFUSION MODELS (${imageModels.length})',
               subtitle: 'Neural diffusion models for generating images & visual artwork.',
@@ -267,47 +283,47 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
             const SizedBox(height: 14),
           ],
 
-          const SizedBox(height: 8),
-
-          // 6. Recommended Models Guide Card
-          GlassCard(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(AppIcons.info, size: 16, color: tokens.accent),
-                    const SizedBox(width: 6),
-                    Text(
-                      'HOW TO DOWNLOAD GGUF MODELS',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.8,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '1. Download any quantized GGUF or image model from Hugging Face:\n'
-                  '   • Llama-3.2-3B-Instruct.Q4_K_M.gguf\n'
-                  '   • DeepSeek-R1-Distill-Qwen-1.5B.Q4_K_M.gguf\n'
-                  '   • SD-Turbo-Image-Gen.gguf (for image generation)\n'
-                  '2. Tap "Import .GGUF / Model from Storage" above.\n'
-                  '3. Set model role (Chat LLM or Image Gen), tap "Load into RAM", and enjoy 100% offline generation!',
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    height: 1.45,
-                    color: tokens.textSecondary,
-                  ),
-                ),
-              ],
+          // 7. 🎬 Video Generative Models Section
+          if (_selectedFilterIndex == 0 || _selectedFilterIndex == 3) ...[
+            _buildSectionHeader(
+              title: '🎬 VIDEO GENERATIVE MODELS (${videoModels.length})',
+              subtitle: 'On-device temporal latent video diffusion models with Android device compatibility.',
+              icon: Icons.movie_filter_rounded,
+              color: Colors.amberAccent,
+              tokens: tokens,
             ),
-          ),
-          const SizedBox(height: 24),
+            if (videoModels.isEmpty)
+              _buildEmptyCategoryCard(
+                title: 'No Video Models Found',
+                subtitle: 'Import AnimateDiff or SVD-based video diffusion GGUF weights.',
+                icon: Icons.movie_filter_rounded,
+                tokens: tokens,
+              )
+            else
+              ...videoModels.map((m) => _buildModelCard(m, tokens, state, notifier)),
+            const SizedBox(height: 14),
+          ],
+
+          // 8. 🎙️ Audio Generative & Speech Models Section
+          if (_selectedFilterIndex == 0 || _selectedFilterIndex == 4) ...[
+            _buildSectionHeader(
+              title: '🎙️ AUDIO & SPEECH MODELS (${audioModels.length})',
+              subtitle: 'On-device speech-to-text, audio synthesis & voice recognition models.',
+              icon: Icons.graphic_eq_rounded,
+              color: Colors.tealAccent,
+              tokens: tokens,
+            ),
+            if (audioModels.isEmpty)
+              _buildEmptyCategoryCard(
+                title: 'No Audio Models Found',
+                subtitle: 'Import Whisper or Voice synthesis GGUF models for on-device audio.',
+                icon: Icons.graphic_eq_rounded,
+                tokens: tokens,
+              )
+            else
+              ...audioModels.map((m) => _buildModelCard(m, tokens, state, notifier)),
+            const SizedBox(height: 14),
+          ],
         ],
       ),
     );
@@ -320,45 +336,38 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
     required GlassTokens tokens,
   }) {
     final isSelected = _selectedFilterIndex == index;
-    final isUncensoredTab = index == 1;
-    final activeColor =
-        isUncensoredTab ? Colors.deepOrangeAccent : tokens.accent;
-
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
-        setState(() {
-          _selectedFilterIndex = index;
-        });
+        setState(() => _selectedFilterIndex = index);
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected
-              ? activeColor.withValues(alpha: 0.22)
+              ? tokens.accent.withValues(alpha: 0.22)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(9),
-          border: isSelected
-              ? Border.all(
-                  color: activeColor.withValues(alpha: 0.55), width: 0.8)
-              : Border.all(color: Colors.transparent, width: 0.8),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? tokens.accent : Colors.transparent,
+            width: 0.8,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
               size: 13,
-              color: isSelected ? activeColor : tokens.textSecondary,
+              color: isSelected ? tokens.accent : tokens.textSecondary,
             ),
             const SizedBox(width: 5),
             Text(
               label,
               style: TextStyle(
-                fontSize: 11.5,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 color: isSelected
                     ? Theme.of(context).colorScheme.onSurface
                     : tokens.textSecondary,
@@ -467,23 +476,25 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
     final downloadProgress = state.getProgress(model.id);
     final downloadStatus = state.getStatus(model.id);
 
+    final modelIcon = model.type == LocalModelType.videoModel
+        ? Icons.movie_filter_rounded
+        : (model.type == LocalModelType.audioModel
+            ? Icons.graphic_eq_rounded
+            : (model.type == LocalModelType.imageModel
+                ? AppIcons.image
+                : AppIcons.cpu));
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: GlassCard(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Row
+            // Header Row: Icon, Title, Badges, Status Chip
             Row(
               children: [
-                Icon(
-                  model.type == LocalModelType.imageModel
-                      ? AppIcons.image
-                      : AppIcons.cpu,
-                  size: 18,
-                  color: tokens.accent,
-                ),
+                Icon(modelIcon, size: 18, color: tokens.accent),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -503,21 +514,14 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
                         spacing: 4,
                         runSpacing: 2,
                         children: [
-                          if (model.isUncensored)
-                            _buildTag(
-                              '🔥 UNCENSORED',
-                              tokens,
-                              color: Colors.deepOrangeAccent,
-                              bgColor: Colors.deepOrangeAccent
-                                  .withValues(alpha: 0.16),
-                            )
-                          else
-                            _buildTag(
-                              model.type == LocalModelType.imageModel
-                                  ? '🎨 IMAGE'
-                                  : '💬 CHAT LLM',
-                              tokens,
-                            ),
+                          _buildTag(
+                            model.categoryBadge,
+                            tokens,
+                            color: model.isUncensored ? Colors.deepOrangeAccent : null,
+                            bgColor: model.isUncensored
+                                ? Colors.deepOrangeAccent.withValues(alpha: 0.16)
+                                : null,
+                          ),
                           _buildTag(model.quantization, tokens),
                           _buildTag(model.formattedSize, tokens),
                         ],
@@ -528,10 +532,7 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
                 const SizedBox(width: 6),
                 // Status Chip with Dynamic State Badge
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: model.isLoadedInRam
                         ? const Color(0xFF10B981).withValues(alpha: 0.18)
@@ -579,20 +580,20 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
                       const SizedBox(width: 5),
                       Text(
                         model.isLoadedInRam
-                            ? 'In RAM (${model.formattedRamUsage})'
+                            ? 'RAM Active'
                             : isDownloading
-                                ? 'Downloading ${(downloadProgress * 100).toStringAsFixed(0)}%'
+                                ? '${(downloadProgress * 100).toInt()}%'
                                 : isDownloaded
-                                    ? '✓ Downloaded'
-                                    : 'Cloud Preset',
+                                    ? 'Downloaded'
+                                    : 'Preset',
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: model.isLoadedInRam || isDownloaded
+                          color: model.isLoadedInRam
                               ? const Color(0xFF10B981)
                               : isDownloading
                                   ? tokens.accent
-                                  : tokens.textSecondary,
+                                  : Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -601,537 +602,366 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
               ],
             ),
 
-            if (model.description != null) ...[
-              const SizedBox(height: 6),
-              Text(
-                model.description!,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: tokens.textSecondary,
-                  fontStyle: FontStyle.italic,
+            // Hardware & Android Device System Requirement Banner
+            Container(
+              margin: const EdgeInsets.only(top: 8, bottom: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: tokens.glassBorder.withValues(alpha: 0.22),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: tokens.glassBorder.withValues(alpha: 0.35),
+                  width: 0.6,
                 ),
               ),
+              child: Row(
+                children: [
+                  Icon(Icons.memory_rounded, size: 12, color: tokens.accent),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      model.hardwareRequirements,
+                      style: TextStyle(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w500,
+                        color: tokens.textSecondary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            if (model.description != null && model.description!.isNotEmpty) ...[
+              Text(
+                model.description!,
+                style: TextStyle(fontSize: 11, color: tokens.textSecondary),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 6),
             ],
 
-            const SizedBox(height: 10),
-
-            // Download Progress Bar (When Downloading)
+            // Download Progress Bar (when downloading)
             if (isDownloading) ...[
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
-                  value: downloadProgress > 0 ? downloadProgress : null,
-                  minHeight: 6,
-                  backgroundColor: Colors.white.withValues(alpha: 0.08),
+                  value: downloadProgress,
+                  minHeight: 5,
+                  backgroundColor: tokens.glassBorder,
                   valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    downloadStatus ?? 'Downloading weights to Downloads folder…',
-                    style: TextStyle(
-                      fontSize: 10.5,
-                      color: tokens.accent,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    downloadStatus ?? '',
+                    style: TextStyle(fontSize: 10, color: tokens.textSecondary),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      notifier.cancelDownload(model.id);
-                    },
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.redAccent.shade100,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  Text(
+                    '${(downloadProgress * 100).toStringAsFixed(1)}%',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: tokens.accent,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
             ],
 
-            // Download Button (When not yet downloaded on storage)
-            if (!isDownloaded && !isDownloading) ...[
-              SizedBox(
-                width: double.infinity,
-                height: 36,
-                child: OutlinedButton.icon(
-                  icon: Icon(AppIcons.download, size: 14, color: tokens.accent),
-                  label: Text(
-                    '⬇ Download Model to Storage (${model.formattedSize})',
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
+            // Action Buttons Row & Organizer Cell Toggle
+            Row(
+              children: [
+                if (!isDownloaded && !isDownloading && model.downloadUrl != null)
+                  ElevatedButton.icon(
+                    icon: const Icon(AppIcons.download, size: 13),
+                    label: const Text('Download Model', style: TextStyle(fontSize: 11)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: tokens.accent,
+                      foregroundColor: tokens.onAccent,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      minimumSize: Size.zero,
                     ),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: tokens.accent.withValues(alpha: 0.12),
-                    side: BorderSide(
-                      color: tokens.accent.withValues(alpha: 0.45),
-                      width: 0.9,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(tokens.radiusSm),
-                    ),
-                  ),
-                  onPressed: () async {
-                    HapticFeedback.mediumImpact();
-                    await notifier.downloadModel(model);
-                  },
-                ),
-              ),
-            ],
-
-            // Controls Row (When downloaded: Load/Unload, Set Active, Expand Config)
-            if (isDownloaded) ...[
-              Row(
-                children: [
-                  // Load / Unload Button
-                  Expanded(
-                    child: SizedBox(
-                      height: 32,
-                      child: OutlinedButton.icon(
-                        icon: state.loadingModelId == model.id
-                            ? SizedBox(
-                                width: 12,
-                                height: 12,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 1.8,
-                                  color: tokens.accent,
-                                ),
-                              )
-                            : Icon(
-                                model.isLoadedInRam
-                                    ? AppIcons.stop
-                                    : AppIcons.play,
-                                size: 12,
-                                color: model.isLoadedInRam
-                                    ? Colors.orangeAccent
-                                    : tokens.accent,
-                              ),
-                        label: Text(
-                          state.loadingModelId == model.id
-                              ? 'Loading RAM…'
-                              : (model.isLoadedInRam
-                                  ? 'Unload from RAM'
-                                  : 'Load into RAM'),
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: model.isLoadedInRam
-                                ? Colors.orangeAccent
-                                : Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: tokens.glassColor,
-                          side: BorderSide(
-                            color: model.isLoadedInRam
-                                ? Colors.orangeAccent.withValues(alpha: 0.4)
-                                : tokens.accent.withValues(alpha: 0.4),
-                            width: 0.8,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(tokens.radiusSm),
-                          ),
-                          padding: EdgeInsets.zero,
-                        ),
-                        onPressed: state.isLoadingModel
-                            ? null
-                            : () async {
-                                HapticFeedback.mediumImpact();
-                                if (model.isLoadedInRam) {
-                                  await notifier.unloadModelFromRam(model.id);
-                                  if (mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('ℹ️ ${model.name} unloaded from RAM.'),
-                                        duration: const Duration(seconds: 2),
-                                      ),
-                                    );
-                                  }
-                                } else {
-                                  await notifier.loadModelIntoRam(model.id);
-                                  if (mounted) {
-                                    final err = ref.read(localModelStoreProvider).errorMessage;
-                                    if (err == null) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('✅ ${model.name} loaded into RAM! Ready to use.'),
-                                          backgroundColor: const Color(0xFF10B981),
-                                          duration: const Duration(seconds: 2),
-                                        ),
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('⚠️ $err'),
-                                          backgroundColor: Colors.redAccent.shade700,
-                                          duration: const Duration(seconds: 4),
-                                        ),
-                                      );
-                                    }
-                                  }
-                                }
-                              },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-
-                  // Set Active Button
-                  SizedBox(
-                    height: 32,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: isActive
-                            ? tokens.accent.withValues(alpha: 0.15)
-                            : tokens.glassColor,
-                        foregroundColor: isActive
-                            ? tokens.accent
-                            : tokens.textSecondary,
-                        side: BorderSide(
-                          color: isActive
-                              ? tokens.accent.withValues(alpha: 0.5)
-                              : tokens.glassBorder,
-                          width: 0.8,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(tokens.radiusSm),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                      ),
-                      onPressed: () {
-                        HapticFeedback.selectionClick();
-                        notifier.setActiveModel(model.id);
-                      },
-                      child: Text(
-                        isActive ? 'Active' : 'Select',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                const SizedBox(width: 6),
-
-                // Settings Accordion Toggle
-                Material(
-                  color: tokens.glassColor,
-                  borderRadius: BorderRadius.circular(tokens.radiusSm),
-                  child: InkWell(
-                    borderRadius:
-                        BorderRadius.circular(tokens.radiusSm),
-                    onTap: () {
-                      setState(() {
-                        _expandedModelId =
-                            isExpanded ? null : model.id;
-                      });
+                    onPressed: () {
+                      notifier.downloadModel(model);
                     },
-                    child: Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(tokens.radiusSm),
-                        border: Border.all(
-                          color: tokens.glassBorder,
-                          width: 0.8,
+                  )
+                else if (isDownloading)
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.close, size: 13),
+                    label: const Text('Cancel Download', style: TextStyle(fontSize: 11)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.redAccent,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      minimumSize: Size.zero,
+                    ),
+                    onPressed: () {
+                      notifier.cancelDownload(model.id);
+                    },
+                  )
+                else ...[
+                  ElevatedButton.icon(
+                    icon: Icon(
+                      model.isLoadedInRam ? Icons.check_circle : Icons.play_arrow_rounded,
+                      size: 14,
+                    ),
+                    label: Text(
+                      model.isLoadedInRam
+                          ? (isActive ? 'Active in RAM' : 'Select Model')
+                          : 'Load into RAM',
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: model.isLoadedInRam
+                          ? (isActive ? tokens.accent : const Color(0xFF10B981))
+                          : tokens.glassBorder.withValues(alpha: 0.6),
+                      foregroundColor: model.isLoadedInRam ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      minimumSize: Size.zero,
+                    ),
+                    onPressed: () {
+                      if (model.isLoadedInRam) {
+                        if (!isActive) {
+                          notifier.setActiveModel(model.id);
+                        }
+                      } else {
+                        notifier.loadModelIntoRam(model.id);
+                      }
+                    },
+                  ),
+                  if (model.isLoadedInRam) ...[
+                    const SizedBox(width: 6),
+                    IconButton(
+                      icon: const Icon(Icons.eject_rounded, size: 16),
+                      tooltip: 'Unload from RAM',
+                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        notifier.unloadModelFromRam(model.id);
+                      },
+                    ),
+                  ],
+                ],
+
+                const Spacer(),
+
+                // Dropdown Organizer Cell Toggle
+                InkWell(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() {
+                      _expandedModelId = isExpanded ? null : model.id;
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: tokens.glassBorder.withValues(alpha: 0.25),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: tokens.glassBorder.withValues(alpha: 0.4), width: 0.6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          isExpanded ? 'Hide Specs' : 'Specs & Tuning',
+                          style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: tokens.textSecondary),
                         ),
-                      ),
-                      child: Icon(
-                        isExpanded
-                            ? AppIcons.chevronUp
-                            : AppIcons.sliders,
-                        size: 14,
-                        color: tokens.textSecondary,
-                      ),
+                        const SizedBox(width: 3),
+                        Icon(
+                          isExpanded ? Icons.expand_less_rounded : Icons.expand_more_rounded,
+                          size: 16,
+                          color: tokens.textSecondary,
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ],
             ),
-          ],
 
-            // Expandable Parameter Settings
+            // Dropdown Organizer Cell (Tuning, Parameters & System Details)
             if (isExpanded) ...[
-              const SizedBox(height: 12),
-              const Divider(height: 1),
               const SizedBox(height: 10),
-
-              // Model Type Toggle (Chat LLM vs Image Model)
-              Row(
-                children: [
-                  Text(
-                    'Model Role:',
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      color: tokens.textSecondary,
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: tokens.glassColor,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: tokens.glassBorder.withValues(alpha: 0.5), width: 0.8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(AppIcons.sliders, size: 13, color: tokens.accent),
+                        const SizedBox(width: 6),
+                        const Text(
+                          'Model Organizer & Configuration',
+                          style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
-                  ),
-                  const Spacer(),
-                  SegmentedButton<LocalModelType>(
-                    segments: const [
-                      ButtonSegment(
-                        value: LocalModelType.chatGguf,
-                        label: Text('Chat', style: TextStyle(fontSize: 10)),
-                        icon: Icon(AppIcons.messageSquare, size: 11),
+                    const SizedBox(height: 8),
+
+                    // Model Type Toggle
+                    Row(
+                      children: [
+                        Text('Role / Kind:', style: TextStyle(fontSize: 11, color: tokens.textSecondary)),
+                        const Spacer(),
+                        DropdownButton<LocalModelType>(
+                          value: model.type,
+                          isDense: true,
+                          dropdownColor: Theme.of(context).colorScheme.surface,
+                          underline: const SizedBox.shrink(),
+                          items: const [
+                            DropdownMenuItem(value: LocalModelType.chatGguf, child: Text('💬 Chat LLM', style: TextStyle(fontSize: 11))),
+                            DropdownMenuItem(value: LocalModelType.uncensoredGguf, child: Text('🔥 Uncensored', style: TextStyle(fontSize: 11))),
+                            DropdownMenuItem(value: LocalModelType.imageModel, child: Text('🎨 Image Diffusion', style: TextStyle(fontSize: 11))),
+                            DropdownMenuItem(value: LocalModelType.videoModel, child: Text('🎬 Video Diffusion', style: TextStyle(fontSize: 11))),
+                            DropdownMenuItem(value: LocalModelType.audioModel, child: Text('🎙️ Audio & Speech', style: TextStyle(fontSize: 11))),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              notifier.setModelType(model.id, val);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+
+                    // Chat Specific Settings
+                    if (model.type == LocalModelType.chatGguf || model.type == LocalModelType.uncensoredGguf) ...[
+                      Row(
+                        children: [
+                          Text('Context: ${model.contextSize} tokens', style: TextStyle(fontSize: 11, color: tokens.textSecondary)),
+                          const Spacer(),
+                          DropdownButton<int>(
+                            value: model.contextSize,
+                            isDense: true,
+                            dropdownColor: Theme.of(context).colorScheme.surface,
+                            underline: const SizedBox.shrink(),
+                            items: const [
+                              DropdownMenuItem(value: 1024, child: Text('1K')),
+                              DropdownMenuItem(value: 2048, child: Text('2K')),
+                              DropdownMenuItem(value: 4096, child: Text('4K')),
+                              DropdownMenuItem(value: 8192, child: Text('8K')),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) notifier.updateModelConfig(model.id, contextSize: val);
+                            },
+                          ),
+                        ],
                       ),
-                      ButtonSegment(
-                        value: LocalModelType.uncensoredGguf,
-                        label:
-                            Text('Uncensored', style: TextStyle(fontSize: 10)),
-                        icon: Icon(AppIcons.zap, size: 11),
-                      ),
-                      ButtonSegment(
-                        value: LocalModelType.imageModel,
-                        label: Text('Image', style: TextStyle(fontSize: 10)),
-                        icon: Icon(AppIcons.image, size: 11),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Text('Threads: ${model.threads}', style: TextStyle(fontSize: 11, color: tokens.textSecondary)),
+                          const Spacer(),
+                          DropdownButton<int>(
+                            value: model.threads,
+                            isDense: true,
+                            dropdownColor: Theme.of(context).colorScheme.surface,
+                            underline: const SizedBox.shrink(),
+                            items: const [
+                              DropdownMenuItem(value: 2, child: Text('2 Cores')),
+                              DropdownMenuItem(value: 4, child: Text('4 Cores')),
+                              DropdownMenuItem(value: 6, child: Text('6 Cores')),
+                              DropdownMenuItem(value: 8, child: Text('8 Cores')),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) notifier.updateModelConfig(model.id, threads: val);
+                            },
+                          ),
+                        ],
                       ),
                     ],
-                    selected: {model.type},
-                    onSelectionChanged: (set) {
-                      if (set.isNotEmpty) {
-                        notifier.setModelType(model.id, set.first);
-                      }
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
 
-              // Chat Specific Settings
-              if (model.type == LocalModelType.chatGguf ||
-                  model.type == LocalModelType.uncensoredGguf) ...[
-                Row(
-                  children: [
-                    Text(
-                      'Context Window: ${model.contextSize} tokens',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        color: tokens.textSecondary,
+                    // Image / Video Specific Settings
+                    if (model.type == LocalModelType.imageModel || model.type == LocalModelType.videoModel) ...[
+                      Row(
+                        children: [
+                          Text('Sampling Steps: ${model.steps}', style: TextStyle(fontSize: 11, color: tokens.textSecondary)),
+                          const Spacer(),
+                          DropdownButton<int>(
+                            value: model.steps,
+                            isDense: true,
+                            dropdownColor: Theme.of(context).colorScheme.surface,
+                            underline: const SizedBox.shrink(),
+                            items: const [
+                              DropdownMenuItem(value: 10, child: Text('10 (Fast)')),
+                              DropdownMenuItem(value: 20, child: Text('20 (Balanced)')),
+                              DropdownMenuItem(value: 30, child: Text('30 (High)')),
+                              DropdownMenuItem(value: 50, child: Text('50 (Ultra)')),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) notifier.updateImageParams(model.id, steps: val);
+                            },
+                          ),
+                        ],
                       ),
-                    ),
-                    const Spacer(),
-                    DropdownButton<int>(
-                      value: model.contextSize,
-                      isDense: true,
-                      dropdownColor: Theme.of(context).colorScheme.surface,
-                      underline: const SizedBox.shrink(),
-                      items: const [
-                        DropdownMenuItem(value: 2048, child: Text('2048')),
-                        DropdownMenuItem(value: 4096, child: Text('4096')),
-                        DropdownMenuItem(value: 8192, child: Text('8192')),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          notifier.updateModelConfig(
-                            model.id,
-                            contextSize: val,
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Text(
-                      'CPU Threads: ${model.threads}',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        color: tokens.textSecondary,
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Text('Aspect Ratio:', style: TextStyle(fontSize: 11, color: tokens.textSecondary)),
+                          const Spacer(),
+                          DropdownButton<String>(
+                            value: model.aspectRatio,
+                            isDense: true,
+                            dropdownColor: Theme.of(context).colorScheme.surface,
+                            underline: const SizedBox.shrink(),
+                            items: const [
+                              DropdownMenuItem(value: '1:1', child: Text('1:1 Square')),
+                              DropdownMenuItem(value: '16:9', child: Text('16:9 Landscape')),
+                              DropdownMenuItem(value: '9:16', child: Text('9:16 Portrait')),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) notifier.updateImageParams(model.id, aspectRatio: val);
+                            },
+                          ),
+                        ],
                       ),
-                    ),
-                    const Spacer(),
-                    DropdownButton<int>(
-                      value: model.threads,
-                      isDense: true,
-                      dropdownColor: Theme.of(context).colorScheme.surface,
-                      underline: const SizedBox.shrink(),
-                      items: const [
-                        DropdownMenuItem(value: 2, child: Text('2 threads')),
-                        DropdownMenuItem(value: 4, child: Text('4 threads')),
-                        DropdownMenuItem(value: 6, child: Text('6 threads')),
-                        DropdownMenuItem(value: 8, child: Text('8 threads')),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          notifier.updateModelConfig(
-                            model.id,
-                            threads: val,
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Text(
-                      'GPU Layers: ${model.gpuLayers}',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        color: tokens.textSecondary,
-                      ),
-                    ),
-                    const Spacer(),
-                    DropdownButton<int>(
-                      value: model.gpuLayers,
-                      isDense: true,
-                      dropdownColor: Theme.of(context).colorScheme.surface,
-                      underline: const SizedBox.shrink(),
-                      items: const [
-                        DropdownMenuItem(value: 0, child: Text('CPU (0)')),
-                        DropdownMenuItem(value: 8, child: Text('8 Layers')),
-                        DropdownMenuItem(value: 16, child: Text('16 Layers')),
-                        DropdownMenuItem(value: 24, child: Text('24 Layers')),
-                        DropdownMenuItem(value: 32, child: Text('32 Layers')),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          notifier.updateModelConfig(
-                            model.id,
-                            gpuLayers: val,
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                    ],
 
-              // Image Generation Specific Settings
-              if (model.type == LocalModelType.imageModel) ...[
-                Row(
-                  children: [
-                    Text(
-                      'Diffusion Steps: ${model.steps}',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        color: tokens.textSecondary,
-                      ),
-                    ),
-                    const Spacer(),
-                    DropdownButton<int>(
-                      value: model.steps,
-                      isDense: true,
-                      dropdownColor: Theme.of(context).colorScheme.surface,
-                      underline: const SizedBox.shrink(),
-                      items: const [
-                        DropdownMenuItem(value: 10, child: Text('10 (Fast)')),
-                        DropdownMenuItem(value: 20, child: Text('20 (Balanced)')),
-                        DropdownMenuItem(value: 30, child: Text('30 (High)')),
-                        DropdownMenuItem(value: 50, child: Text('50 (Ultra)')),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Text('Hardware Requirement:', style: TextStyle(fontSize: 10.5, color: tokens.textSecondary)),
+                        const Spacer(),
+                        Text(
+                          model.type == LocalModelType.videoModel
+                              ? '8GB RAM · Vulkan'
+                              : (model.type == LocalModelType.audioModel
+                                  ? '4GB RAM · Any'
+                                  : '4GB RAM · CPU/GPU'),
+                          style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.bold, color: tokens.accent),
+                        ),
                       ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          notifier.updateImageParams(
-                            model.id,
-                            steps: val,
-                          );
-                        }
-                      },
                     ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Text(
-                      'Aspect Ratio:',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        color: tokens.textSecondary,
-                      ),
-                    ),
-                    const Spacer(),
-                    DropdownButton<String>(
-                      value: model.aspectRatio,
-                      isDense: true,
-                      dropdownColor: Theme.of(context).colorScheme.surface,
-                      underline: const SizedBox.shrink(),
-                      items: const [
-                        DropdownMenuItem(value: '1:1', child: Text('1:1 Square')),
-                        DropdownMenuItem(value: '16:9', child: Text('16:9 Landscape')),
-                        DropdownMenuItem(value: '9:16', child: Text('9:16 Portrait')),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          notifier.updateImageParams(
-                            model.id,
-                            aspectRatio: val,
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Text(
-                      'Sampler: ${model.sampler}',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        color: tokens.textSecondary,
-                      ),
-                    ),
-                    const Spacer(),
-                    DropdownButton<String>(
-                      value: model.sampler,
-                      isDense: true,
-                      dropdownColor: Theme.of(context).colorScheme.surface,
-                      underline: const SizedBox.shrink(),
-                      items: const [
-                        DropdownMenuItem(value: 'Euler A', child: Text('Euler A')),
-                        DropdownMenuItem(value: 'DPM++ 2M', child: Text('DPM++ 2M')),
-                        DropdownMenuItem(value: 'DDIM', child: Text('DDIM')),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          notifier.updateImageParams(
-                            model.id,
-                            sampler: val,
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ],
 
-              const SizedBox(height: 8),
-
-              // Delete Model Button
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton.icon(
-                  icon: Icon(AppIcons.trash,
-                      size: 13, color: Colors.redAccent),
-                  label: const Text(
-                    'Remove Model',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.redAccent,
+                    const SizedBox(height: 8),
+                    // Remove Model Button
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton.icon(
+                        icon: const Icon(AppIcons.trash, size: 13, color: Colors.redAccent),
+                        label: const Text('Remove Model', style: TextStyle(fontSize: 11, color: Colors.redAccent)),
+                        onPressed: () {
+                          notifier.deleteModel(model.id);
+                        },
+                      ),
                     ),
-                  ),
-                  onPressed: () {
-                    notifier.deleteModel(model.id);
-                  },
+                  ],
                 ),
               ),
             ],
@@ -1143,7 +973,7 @@ class _LocalModelsScreenState extends ConsumerState<LocalModelsScreen> {
 
   Widget _buildTag(
     String text,
-    dynamic tokens, {
+    GlassTokens tokens, {
     Color? color,
     Color? bgColor,
   }) {

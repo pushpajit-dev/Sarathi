@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mcp_dart/mcp_dart.dart' show Tool;
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/glass_button.dart';
-import 'package:pocketstrike/features/mcp/application/mcp_controller.dart';
-import 'package:pocketstrike/features/mcp/ui/mcp_marketplace_sheet.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/glass_button.dart';
+import 'package:sarathi/features/mcp/application/mcp_controller.dart';
+import 'package:sarathi/features/mcp/ui/mcp_marketplace_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum _AuthMode { none, token, oauth }
@@ -140,7 +140,7 @@ class _ConnectMcpSheetState extends ConsumerState<ConnectMcpSheet> {
         if (_oauthProvider == 'notion') {
           headers['Notion-Version'] = '2022-06-28';
         } else if (_oauthProvider == 'github') {
-          headers['User-Agent'] = 'PocketStrike-MCP';
+          headers['User-Agent'] = 'Sarathi-MCP';
         }
       }
     }
@@ -840,7 +840,7 @@ class _ConnectMcpSheetState extends ConsumerState<ConnectMcpSheet> {
                               id: 'github',
                               label: 'GitHub',
                               icon: AppIcons.code,
-                              defaultAuthUrl: 'https://github.com/settings/tokens/new?description=PocketStrike%20MCP&scopes=repo,read:org',
+                              defaultAuthUrl: 'https://github.com/settings/tokens/new?description=Sarathi%20MCP&scopes=repo,read:org',
                             ),
                           ],
                         ),
@@ -960,7 +960,7 @@ class _ConnectMcpSheetState extends ConsumerState<ConnectMcpSheet> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        '💡 Paste either the direct access token or the full redirect URL — PocketStrike auto-extracts the token and stores it with AES-GCM encryption in Android Keystore.',
+                        '💡 Paste either the direct access token or the full redirect URL — Sarathi auto-extracts the token and stores it with AES-GCM encryption in Android Keystore.',
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 10,
                           color: tokens.textSecondary,

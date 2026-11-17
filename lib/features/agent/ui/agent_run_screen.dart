@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/features/chat/application/chat_controller.dart';
-import 'package:pocketstrike/features/chat/ui/widgets/agent_timeline.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/features/chat/application/chat_controller.dart';
+import 'package:sarathi/features/chat/ui/widgets/agent_timeline.dart';
 
 /// Full-screen Agent Run Viewer detailing each step, arguments,
 /// observations, and safety status.

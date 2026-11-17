@@ -1,9 +1,10 @@
+import 'package:sarathi/core/localization/language_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/glass_button.dart';
-import 'package:pocketstrike/features/agent/data/cron_task_store.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/glass_button.dart';
+import 'package:sarathi/features/agent/data/cron_task_store.dart';
 
 class CronTasksScreen extends ConsumerWidget {
   const CronTasksScreen({super.key});
@@ -122,7 +123,7 @@ class CronTasksScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Scheduled Tasks & Cron Jobs',
+          ref.t('scheduledTasks'),
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ),

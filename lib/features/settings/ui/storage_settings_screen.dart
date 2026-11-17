@@ -1,11 +1,11 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/core/storage/prefs_provider.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/glass_button.dart';
-import 'package:pocketstrike/features/agent/domain/agent_tool.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/core/storage/prefs_provider.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/glass_button.dart';
+import 'package:sarathi/features/agent/domain/agent_tool.dart';
 
 class StorageSettingsScreen extends ConsumerStatefulWidget {
   const StorageSettingsScreen({super.key});
@@ -91,7 +91,7 @@ class _StorageSettingsScreenState
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'The PocketStrike agent can only read, write, or list files inside '
+                  'The Sarathi agent can only read, write, or list files inside '
                   'explicitly permitted root folders. Full device storage is never accessed.',
                   style: TextStyle(color: tokens.textSecondary),
                 ),

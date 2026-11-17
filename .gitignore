@@ -45,3 +45,21 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Added safety ignores
+*.jks
+*.keystore
+local.properties
+key.properties
+.env
+.env.local
+.env.production
+*firebase-adminsdk*.json
+credentials.json
+*.pem
+*.p12
+.gradle/
+build/
+app/build/
+.cxx/
+node_modules/

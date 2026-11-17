@@ -1,15 +1,16 @@
+import 'package:url_launcher/url_launcher.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/core/models/chat_models.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/glass_button.dart';
-import 'package:pocketstrike/features/providers/application/providers_controller.dart';
-import 'package:pocketstrike/features/providers/data/provider_registry.dart';
-import 'package:pocketstrike/features/providers/domain/provider_types.dart';
-import 'package:pocketstrike/core/db/app_database.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/core/models/chat_models.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/glass_button.dart';
+import 'package:sarathi/features/providers/application/providers_controller.dart';
+import 'package:sarathi/features/providers/data/provider_registry.dart';
+import 'package:sarathi/features/providers/domain/provider_types.dart';
+import 'package:sarathi/core/db/app_database.dart';
 
 class ProviderEditScreen extends ConsumerStatefulWidget {
   const ProviderEditScreen({super.key, this.configId});
@@ -317,6 +318,7 @@ class _ProviderEditScreenState extends ConsumerState<ProviderEditScreen> {
     final isEditing = widget.configId != null;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           isEditing ? 'Edit Provider' : 'Add AI Provider',
@@ -392,6 +394,32 @@ class _ProviderEditScreenState extends ConsumerState<ProviderEditScreen> {
               ),
             ),
           ),
+          if (_selectedType.portalUrl != null) ...[
+            const SizedBox(height: 6),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                icon: const Icon(Icons.open_in_browser_rounded, size: 15),
+                label: Text(
+                  _selectedType == ProviderType.gemini
+                      ? 'Sign-in & Get Key at Google AI Studio (Antigravity CLI)'
+                      : 'Sign-in & Get Key at ${_selectedType.portalTitle ?? _selectedType.displayName}',
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: tokens.accent,
+                  padding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                ),
+                onPressed: () async {
+                  final uri = Uri.parse(_selectedType.portalUrl!);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }
+                },
+              ),
+            ),
+          ],
           const SizedBox(height: 14),
 
           // Custom Base URL

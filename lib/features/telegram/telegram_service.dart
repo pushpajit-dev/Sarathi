@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/core/db/app_database.dart';
-import 'package:pocketstrike/core/storage/prefs_provider.dart';
-import 'package:pocketstrike/core/storage/secure_keys.dart';
-import 'package:pocketstrike/features/conversations/application/conversations_controller.dart';
-import 'package:pocketstrike/features/chat/application/chat_controller.dart';
-import 'package:pocketstrike/features/providers/application/providers_controller.dart';
+import 'package:sarathi/core/db/app_database.dart';
+import 'package:sarathi/core/storage/prefs_provider.dart';
+import 'package:sarathi/core/storage/secure_keys.dart';
+import 'package:sarathi/features/conversations/application/conversations_controller.dart';
+import 'package:sarathi/features/chat/application/chat_controller.dart';
+import 'package:sarathi/features/providers/application/providers_controller.dart';
 
 enum TelegramBridgeStatus { disabled, polling, error }
 
@@ -118,7 +118,7 @@ class TelegramServiceNotifier extends Notifier<TelegramServiceState> {
 
       state = state.copyWith(
         status: TelegramBridgeStatus.polling,
-        botName: botUser != null ? '@$botUser' : 'PocketStrike Bot',
+        botName: botUser != null ? '@$botUser' : 'Sarathi Bot',
         allowedChatId: chatId,
         clearLastError: true,
       );
@@ -207,10 +207,10 @@ class TelegramServiceNotifier extends Notifier<TelegramServiceState> {
             await _sendTelegramMessage(
               token,
               chatId,
-              '🔒 **PocketStrike Security Guard**\n\n'
+              '🔒 **Sarathi Security Guard**\n\n'
               'This bot is currently locked to a specific Allowed Chat ID in the mobile app.\n\n'
               '👉 **Your Chat ID is:** `$chatId`\n\n'
-              'To allow messages from this account, add `$chatId` under **Settings > Telegram Bridge** in your PocketStrike mobile app.',
+              'To allow messages from this account, add `$chatId` under **Settings > Telegram Bridge** in your Sarathi mobile app.',
             );
           }
           continue;
@@ -240,11 +240,11 @@ class TelegramServiceNotifier extends Notifier<TelegramServiceState> {
       await _sendTelegramMessage(
         token,
         chatId,
-        '👋 **Hello $fromUser! Welcome to PocketStrike AI.**\n\n'
+        '👋 **Hello $fromUser! Welcome to Sarathi AI.**\n\n'
         'Your phone is now acting as your autonomous remote AI workstation.\n\n'
         '📌 **Your Chat ID:** `$chatId`\n'
         '🤖 **Bot Status:** Online & Connected\n\n'
-        'Send any prompt, task, or question, and PocketStrike will compute the answer directly on your mobile device!',
+        'Send any prompt, task, or question, and Sarathi will compute the answer directly on your mobile device!',
       );
       return;
     }
@@ -262,7 +262,7 @@ class TelegramServiceNotifier extends Notifier<TelegramServiceState> {
       await _sendTelegramMessage(
         token,
         chatId,
-        '🏓 **Pong!** PocketStrike Mobile Agent is online and connected.',
+        '🏓 **Pong!** Sarathi Mobile Agent is online and connected.',
       );
       return;
     }
@@ -275,8 +275,8 @@ class TelegramServiceNotifier extends Notifier<TelegramServiceState> {
       await _sendTelegramMessage(
         token,
         chatId,
-        '⚠️ **PocketStrike Error**: No AI Provider configured in the mobile app.\n\n'
-        'Please open PocketStrike on your phone and add an AI provider key (OpenAI, Claude, Gemini, Groq, or Ollama) in **Settings > AI Providers**.',
+        '⚠️ **Sarathi Error**: No AI Provider configured in the mobile app.\n\n'
+        'Please open Sarathi on your phone and add an AI provider key (OpenAI, Claude, Gemini, Groq, or Ollama) in **Settings > AI Providers**.',
       );
       return;
     }
@@ -333,7 +333,7 @@ class TelegramServiceNotifier extends Notifier<TelegramServiceState> {
         await _sendTelegramMessage(
           token,
           chatId,
-          '⚡ PocketStrike processed your request.',
+          '⚡ Sarathi processed your request.',
         );
       }
     } catch (e) {

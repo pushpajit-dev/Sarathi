@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/app_theme.dart';
-import 'package:pocketstrike/core/db/app_database.dart';
-import 'package:pocketstrike/features/chat/ui/widgets/message_bubble.dart';
+import 'package:sarathi/app/theme/app_theme.dart';
+import 'package:sarathi/core/db/app_database.dart';
+import 'package:sarathi/features/chat/ui/widgets/message_bubble.dart';
 
 void main() {
   testWidgets('renders table inside MessageBubble with left-to-right horizontal scrolling', (tester) async {

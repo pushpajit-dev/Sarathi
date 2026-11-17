@@ -16,7 +16,8 @@ class ThemeModeController extends Notifier<ThemeMode> {
     return switch (stored) {
       'light' => ThemeMode.light,
       'dark' => ThemeMode.dark,
-      _ => ThemeMode.dark, // dark is the default brand theme
+      'system' => ThemeMode.system,
+      _ => ThemeMode.system,
     };
   }
 

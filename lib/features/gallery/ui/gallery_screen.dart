@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pocketstrike/app/router.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/features/gallery/application/gallery_controller.dart';
-import 'package:pocketstrike/features/gallery/data/gallery_item.dart';
-import 'package:pocketstrike/features/gallery/ui/image_preview_dialog.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/empty_state.dart';
+import 'package:sarathi/app/router.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/features/gallery/application/gallery_controller.dart';
+import 'package:sarathi/features/gallery/data/gallery_item.dart';
+import 'package:sarathi/features/gallery/ui/image_preview_dialog.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/empty_state.dart';
 
 class GalleryScreen extends ConsumerStatefulWidget {
   const GalleryScreen({super.key});

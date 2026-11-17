@@ -1,6 +1,6 @@
 import 'dart:io';
 
-enum LocalModelType { chatGguf, uncensoredGguf, imageModel }
+enum LocalModelType { chatGguf, uncensoredGguf, imageModel, videoModel, audioModel }
 
 class LocalModelInfo {
   const LocalModelInfo({
@@ -55,6 +55,40 @@ class LocalModelInfo {
       name.toLowerCase().contains('heretic') ||
       name.toLowerCase().contains('abliterated') ||
       name.toLowerCase().contains('uncensored');
+
+  bool get isVideo => type == LocalModelType.videoModel;
+  bool get isAudio => type == LocalModelType.audioModel;
+  bool get isImage => type == LocalModelType.imageModel;
+
+  String get hardwareRequirements {
+    switch (type) {
+      case LocalModelType.videoModel:
+        return 'Min 6GB - 8GB RAM · ARM64 Vulkan · Snapdragon 8 / Dimensity 9000+';
+      case LocalModelType.audioModel:
+        return 'Min 3GB - 4GB RAM · Any Android 64-bit device';
+      case LocalModelType.imageModel:
+        return 'Min 4GB - 6GB RAM · Snapdragon / Dimensity recommended';
+      case LocalModelType.uncensoredGguf:
+        return 'Min 2GB - 4GB RAM · On-device CPU/GPU';
+      case LocalModelType.chatGguf:
+        return 'Min 2GB - 4GB RAM · On-device CPU/GPU';
+    }
+  }
+
+  String get categoryBadge {
+    switch (type) {
+      case LocalModelType.videoModel:
+        return '🎬 VIDEO GEN';
+      case LocalModelType.audioModel:
+        return '🎙️ AUDIO & SPEECH';
+      case LocalModelType.imageModel:
+        return '🎨 IMAGE GEN';
+      case LocalModelType.uncensoredGguf:
+        return '🔥 UNCENSORED';
+      case LocalModelType.chatGguf:
+        return '💬 CHAT GGUF';
+    }
+  }
 
   bool get isDownloaded {
     try {

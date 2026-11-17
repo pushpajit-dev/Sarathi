@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/core/storage/prefs_provider.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/core/storage/prefs_provider.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
 
 class AgentToolsScreen extends ConsumerStatefulWidget {
   const AgentToolsScreen({super.key});

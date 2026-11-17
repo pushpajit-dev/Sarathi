@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:pocketstrike/features/agent/domain/agent_tool.dart';
+import 'package:sarathi/features/agent/domain/agent_tool.dart';
 
 /// Native Android Device Automation & Hardware System Tools.
 class AndroidAutomationTools {

@@ -1,22 +1,31 @@
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pocketstrike/app/router.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/glass_button.dart';
-import 'package:pocketstrike/shared/widgets/status_dot.dart';
-import 'package:pocketstrike/features/providers/application/providers_controller.dart';
+import 'package:sarathi/app/router.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/glass_button.dart';
+import 'package:sarathi/shared/widgets/status_dot.dart';
+import 'package:sarathi/features/providers/application/providers_controller.dart';
 
 class ProvidersSettingsScreen extends ConsumerWidget {
   const ProvidersSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Future<void> openPortal(String url) async {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    }
+
     final tokens = context.glass;
     final configs = ref.watch(providerConfigsProvider).valueOrNull ?? const [];
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           'AI Providers',
@@ -49,6 +58,45 @@ class ProvidersSettingsScreen extends ConsumerWidget {
                       label: 'Add AI Provider',
                       icon: AppIcons.plus,
                       onPressed: () => context.push(AppRoutes.settingsProviderEdit),
+                    ),
+                    const SizedBox(height: 20),
+                    const Divider(height: 1),
+                    const SizedBox(height: 14),
+                    Text(
+                      'Direct Browser Key Portals',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: tokens.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        ActionChip(
+                          avatar: const Icon(Icons.open_in_new, size: 12),
+                          label: const Text('Google AI Studio', style: TextStyle(fontSize: 10.5)),
+                          onPressed: () => openPortal('https://aistudio.google.com/app/apikey'),
+                        ),
+                        ActionChip(
+                          avatar: const Icon(Icons.open_in_new, size: 12),
+                          label: const Text('Anthropic Claude', style: TextStyle(fontSize: 10.5)),
+                          onPressed: () => openPortal('https://console.anthropic.com/settings/keys'),
+                        ),
+                        ActionChip(
+                          avatar: const Icon(Icons.open_in_new, size: 12),
+                          label: const Text('OpenAI Codex', style: TextStyle(fontSize: 10.5)),
+                          onPressed: () => openPortal('https://platform.openai.com/api-keys'),
+                        ),
+                        ActionChip(
+                          avatar: const Icon(Icons.open_in_new, size: 12),
+                          label: const Text('Groq Cloud', style: TextStyle(fontSize: 10.5)),
+                          onPressed: () => openPortal('https://console.groq.com/keys'),
+                        ),
+                      ],
                     ),
                   ],
                 ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pocketstrike/app/theme/app_theme.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/features/agent/domain/agent_event.dart';
+import 'package:sarathi/app/theme/app_theme.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/features/agent/domain/agent_event.dart';
 
 /// Modern executive live animated tool-call timeline shown during agent execution (Hermes / OpenClaw style).
 class AgentTimeline extends StatefulWidget {

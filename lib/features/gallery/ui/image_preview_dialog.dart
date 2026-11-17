@@ -1,11 +1,12 @@
+import 'package:sarathi/core/localization/language_provider.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/features/gallery/application/gallery_controller.dart';
-import 'package:pocketstrike/features/gallery/data/gallery_item.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/features/gallery/application/gallery_controller.dart';
+import 'package:sarathi/features/gallery/data/gallery_item.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
 
 class ImagePreviewDialog extends ConsumerStatefulWidget {
   const ImagePreviewDialog({
@@ -69,7 +70,7 @@ class _ImagePreviewDialogState extends ConsumerState<ImagePreviewDialog> {
             Expanded(
               child: Text(
                 success
-                    ? 'Saved to Gallery in Pictures/PocketStrike'
+                    ? 'Saved to Gallery in Pictures/Sarathi'
                     : 'Failed to save image to gallery',
                 style: const TextStyle(fontSize: 13, color: Colors.white),
               ),
@@ -109,7 +110,7 @@ class _ImagePreviewDialogState extends ConsumerState<ImagePreviewDialog> {
             const Icon(AppIcons.trash, color: Colors.redAccent, size: 20),
             const SizedBox(width: 10),
             Text(
-              'Delete from App?',
+              ctx.t('deleteImageTitle'),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -119,7 +120,7 @@ class _ImagePreviewDialogState extends ConsumerState<ImagePreviewDialog> {
           ],
         ),
         content: Text(
-          'Delete this image from the app gallery? Any copy you saved to your phone\'s Gallery will remain safe on your device storage.',
+          ctx.t('deleteImageMsg'),
           style: TextStyle(
             fontSize: 13,
             color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
@@ -129,7 +130,7 @@ class _ImagePreviewDialogState extends ConsumerState<ImagePreviewDialog> {
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
-              'Cancel',
+              ctx.t('cancel'),
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
@@ -144,7 +145,7 @@ class _ImagePreviewDialogState extends ConsumerState<ImagePreviewDialog> {
               ),
             ),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Delete'),
+            child: Text(ctx.t('delete')),
           ),
         ],
       ),

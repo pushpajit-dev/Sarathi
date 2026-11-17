@@ -1,25 +1,25 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pocketstrike/core/storage/prefs_provider.dart';
-import 'package:pocketstrike/features/agent/ui/agent_run_screen.dart';
-import 'package:pocketstrike/features/chat/ui/home_shell.dart';
-import 'package:pocketstrike/features/onboarding/onboarding_screen.dart';
-import 'package:pocketstrike/features/onboarding/splash_screen.dart';
-import 'package:pocketstrike/features/settings/ui/about_export_screen.dart';
-import 'package:pocketstrike/features/settings/ui/agent_tools_screen.dart';
-import 'package:pocketstrike/features/settings/ui/appearance_settings_screen.dart';
-import 'package:pocketstrike/features/settings/ui/cron_tasks_screen.dart';
-import 'package:pocketstrike/features/settings/ui/hermes_evolution_screen.dart';
-import 'package:pocketstrike/features/settings/ui/local_models_screen.dart';
-import 'package:pocketstrike/features/settings/ui/mcp_settings_screen.dart';
-import 'package:pocketstrike/features/settings/ui/memory_settings_screen.dart';
-import 'package:pocketstrike/features/settings/ui/model_params_screen.dart';
-import 'package:pocketstrike/features/settings/ui/provider_edit_screen.dart';
-import 'package:pocketstrike/features/settings/ui/providers_settings_screen.dart';
-import 'package:pocketstrike/features/settings/ui/settings_screen.dart';
-import 'package:pocketstrike/features/gallery/ui/gallery_screen.dart';
-import 'package:pocketstrike/features/settings/ui/storage_settings_screen.dart';
-import 'package:pocketstrike/features/settings/ui/telegram_settings_screen.dart';
+import 'package:sarathi/core/storage/prefs_provider.dart';
+import 'package:sarathi/features/agent/ui/agent_run_screen.dart';
+import 'package:sarathi/features/chat/ui/home_shell.dart';
+import 'package:sarathi/features/onboarding/onboarding_screen.dart';
+import 'package:sarathi/features/onboarding/splash_screen.dart';
+import 'package:sarathi/features/settings/ui/about_export_screen.dart';
+import 'package:sarathi/features/settings/ui/agent_tools_screen.dart';
+import 'package:sarathi/features/settings/ui/appearance_settings_screen.dart';
+import 'package:sarathi/features/settings/ui/cron_tasks_screen.dart';
+import 'package:sarathi/features/settings/ui/hermes_evolution_screen.dart';
+import 'package:sarathi/features/settings/ui/local_models_screen.dart';
+import 'package:sarathi/features/settings/ui/mcp_settings_screen.dart';
+import 'package:sarathi/features/settings/ui/memory_settings_screen.dart';
+import 'package:sarathi/features/settings/ui/model_params_screen.dart';
+import 'package:sarathi/features/settings/ui/provider_edit_screen.dart';
+import 'package:sarathi/features/settings/ui/providers_settings_screen.dart';
+import 'package:sarathi/features/settings/ui/settings_screen.dart';
+import 'package:sarathi/features/gallery/ui/gallery_screen.dart';
+import 'package:sarathi/features/settings/ui/storage_settings_screen.dart';
+import 'package:sarathi/features/settings/ui/telegram_settings_screen.dart';
 
 /// App routes.
 abstract class AppRoutes {
@@ -50,12 +50,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
     redirect: (context, state) {
+      if (state.matchedLocation == AppRoutes.splash) return null;
       final onboardingDone = prefs.getBool('onboarding_done') ?? false;
-      final onSplash = state.matchedLocation == AppRoutes.splash;
       if (!onboardingDone && state.matchedLocation != AppRoutes.onboarding) {
         return AppRoutes.onboarding;
       }
-      if (onboardingDone && onSplash) return AppRoutes.chat;
       return null;
     },
     routes: [

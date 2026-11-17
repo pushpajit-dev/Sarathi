@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pocketstrike/app/theme/app_theme.dart';
-import 'package:pocketstrike/core/db/app_database.dart';
-import 'package:pocketstrike/core/storage/prefs_provider.dart';
-import 'package:pocketstrike/features/chat/application/chat_controller.dart';
-import 'package:pocketstrike/features/chat/ui/chat_screen.dart';
-import 'package:pocketstrike/features/conversations/application/conversations_controller.dart';
-import 'package:pocketstrike/features/telegram/telegram_service.dart';
-import 'package:pocketstrike/features/mcp/application/mcp_controller.dart';
-import 'package:pocketstrike/features/mcp/data/mcp_connection_manager.dart';
-import 'package:pocketstrike/features/agent/data/cron_task_store.dart';
+import 'package:sarathi/app/theme/app_theme.dart';
+import 'package:sarathi/core/db/app_database.dart';
+import 'package:sarathi/core/storage/prefs_provider.dart';
+import 'package:sarathi/features/chat/application/chat_controller.dart';
+import 'package:sarathi/features/chat/ui/chat_screen.dart';
+import 'package:sarathi/features/conversations/application/conversations_controller.dart';
+import 'package:sarathi/features/telegram/telegram_service.dart';
+import 'package:sarathi/features/mcp/application/mcp_controller.dart';
+import 'package:sarathi/features/mcp/data/mcp_connection_manager.dart';
+import 'package:sarathi/features/agent/data/cron_task_store.dart';
 
 class MockTelegramNotifier extends TelegramServiceNotifier {
   @override

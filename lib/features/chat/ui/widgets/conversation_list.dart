@@ -1,13 +1,14 @@
+import 'package:sarathi/core/localization/language_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:pocketstrike/app/router.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/core/db/app_database.dart' show Conversation;
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/features/conversations/application/conversations_controller.dart';
+import 'package:sarathi/app/router.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/core/db/app_database.dart' show Conversation;
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/features/conversations/application/conversations_controller.dart';
 
 /// Searchable conversation history, grouped by date, pinned section on top.
 class ConversationList extends ConsumerWidget {
@@ -58,17 +59,24 @@ class ConversationList extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6),
       children: [
         if (pinned.isNotEmpty) ...[
-          const _SectionHeader(label: 'Pinned'),
+          _SectionHeader(label: ref.t('pinned')),
           for (final c in pinned)
             _ConversationTile(conversation: c, isActive: c.id == currentId),
         ],
         for (final group in groups.entries) ...[
-          _SectionHeader(label: group.key),
+          _SectionHeader(label: _localizeGroup(group.key, ref)),
           for (final c in group.value)
             _ConversationTile(conversation: c, isActive: c.id == currentId),
         ],
       ],
     );
+  }
+
+  String _localizeGroup(String key, WidgetRef ref) {
+    if (key == 'Today') return ref.t('today');
+    if (key == 'Yesterday') return ref.t('yesterday');
+    if (key == 'Previous 7 days') return ref.t('previous7Days');
+    return key;
   }
 
   Map<String, List<Conversation>> _groupByDate(List<Conversation> items) {
@@ -215,10 +223,10 @@ class _ConversationTile extends ConsumerWidget {
                   dense: true,
                   leading: Icon(AppIcons.edit,
                       size: 18, color: tokens.textSecondary),
-                  title: const Text('Rename', style: TextStyle(fontSize: 13)),
+                  title: Text(ref.t('rename'), style: const TextStyle(fontSize: 13)),
                   onTap: () async {
                     Navigator.pop(sheetContext);
-                    final newTitle = await _promptRename(context);
+                    final newTitle = await _promptRename(context, ref);
                     if (newTitle != null && newTitle.isNotEmpty) {
                       await actions.rename(conversation.id, newTitle);
                     }
@@ -233,7 +241,7 @@ class _ConversationTile extends ConsumerWidget {
                     size: 18,
                     color: tokens.textSecondary,
                   ),
-                  title: Text(conversation.pinned ? 'Unpin' : 'Pin',
+                  title: Text(conversation.pinned ? ref.t('unpin') : ref.t('pin'),
                       style: const TextStyle(fontSize: 13)),
                   onTap: () async {
                     Navigator.pop(sheetContext);
@@ -243,8 +251,8 @@ class _ConversationTile extends ConsumerWidget {
                 ListTile(
                   dense: true,
                   leading: const Icon(AppIcons.gitBranch, size: 18),
-                  title: const Text('Branch conversation',
-                      style: TextStyle(fontSize: 13)),
+                  title: Text(ref.t('branchConversation'),
+                      style: const TextStyle(fontSize: 13)),
                   onTap: () async {
                     Navigator.pop(sheetContext);
                     final newId = await actions.branch(conversation.id);
@@ -260,8 +268,8 @@ class _ConversationTile extends ConsumerWidget {
                   dense: true,
                   leading: const Icon(AppIcons.trash2,
                       size: 18, color: Colors.redAccent),
-                  title: const Text('Delete',
-                      style: TextStyle(fontSize: 13, color: Colors.redAccent)),
+                  title: Text(ref.t('delete'),
+                      style: const TextStyle(fontSize: 13, color: Colors.redAccent)),
                   onTap: () async {
                     Navigator.pop(sheetContext);
                     await actions.delete(conversation.id);
@@ -276,26 +284,30 @@ class _ConversationTile extends ConsumerWidget {
     );
   }
 
-  Future<String?> _promptRename(BuildContext context) {
+  Future<String?> _promptRename(BuildContext context, WidgetRef ref) {
     final controller = TextEditingController(text: conversation.title);
     return showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Rename chat'),
+        title: Text(ref.t('renameChat')),
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(hintText: 'Chat title'),
+          style: const TextStyle(fontSize: 13.5),
+          decoration: InputDecoration(
+            hintText: ref.t('chatTitle'),
+            hintStyle: const TextStyle(fontSize: 12),
+          ),
           onSubmitted: (v) => Navigator.pop(dialogContext, v),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text(ref.t('cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, controller.text),
-            child: const Text('Save'),
+            child: Text(ref.t('save')),
           ),
         ],
       ),

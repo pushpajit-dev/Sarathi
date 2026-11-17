@@ -6,22 +6,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pocketstrike/app/router.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/core/db/app_database.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/shared/widgets/confirm_action_sheet.dart';
-import 'package:pocketstrike/shared/widgets/empty_state.dart';
-import 'package:pocketstrike/features/conversations/application/conversations_controller.dart';
-import 'package:pocketstrike/features/mcp/ui/mcp_toggle_menu.dart';
-import 'package:pocketstrike/features/providers/application/providers_controller.dart';
-import 'package:pocketstrike/features/chat/application/chat_controller.dart';
-import 'package:pocketstrike/features/chat/ui/widgets/agent_timeline.dart';
-import 'package:pocketstrike/features/chat/ui/widgets/app_drawer.dart';
-import 'package:pocketstrike/features/chat/ui/widgets/chat_input_bar.dart';
-import 'package:pocketstrike/features/chat/ui/widgets/message_bubble.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_info.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_store.dart';
+import 'package:sarathi/app/router.dart';
+import 'package:sarathi/core/localization/language_provider.dart';
+import 'package:sarathi/core/storage/prefs_provider.dart';
+import 'package:sarathi/shared/widgets/tutorial_overlay.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/core/db/app_database.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/shared/widgets/confirm_action_sheet.dart';
+import 'package:sarathi/features/conversations/application/conversations_controller.dart';
+import 'package:sarathi/features/mcp/ui/mcp_toggle_menu.dart';
+import 'package:sarathi/features/providers/application/providers_controller.dart';
+import 'package:sarathi/features/chat/application/chat_controller.dart';
+import 'package:sarathi/features/chat/ui/widgets/agent_timeline.dart';
+import 'package:sarathi/features/chat/ui/widgets/app_drawer.dart';
+import 'package:sarathi/features/chat/ui/widgets/chat_input_bar.dart';
+import 'package:sarathi/features/chat/ui/widgets/message_bubble.dart';
+import 'package:sarathi/features/local_models/data/local_model_info.dart';
+import 'package:sarathi/features/local_models/data/local_model_store.dart';
 
 /// Messages for the open conversation.
 final messagesProvider = StreamProvider<List<Message>>((ref) {
@@ -48,6 +50,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     super.initState();
     _scrollController.addListener(_onScrollChanged);
     // Install the confirmation bridge between the agent engine and the UI.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final prefs = ref.read(sharedPreferencesProvider);
+      if (prefs.getBool('tutorial_seen') != true) {
+        TutorialOverlay.show(context, ref);
+      }
+    });
     ref.read(chatControllerProvider.notifier).confirmHandler =
         (tool, call) => ConfirmActionSheet.show(
               context,
@@ -152,8 +161,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     });
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawerScrimColor: Colors.transparent,
+      resizeToAvoidBottomInset: true,
       drawer: const AppDrawer(),
       appBar: AppBar(
         leading: Builder(
@@ -166,7 +176,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
         ),
         title: Text(
-          conversation?.title ?? 'PocketStrike',
+          conversation?.title ?? ref.watch(currentAppNameProvider),
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -235,6 +245,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
           ),
           Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: _GlassIconButton(
+              icon: AppIcons.info,
+              tooltip: ref.t('tutorialTour'),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                TutorialOverlay.show(context, ref);
+              },
+            ),
+          ),
+          Padding(
             padding: const EdgeInsets.only(left: 3, right: 10),
             child: _GlassIconButton(
               icon: AppIcons.plus,
@@ -250,8 +271,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ],
       ),
 
-      body: Column(
-        children: [
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: Column(
+          children: [
           // ---- Sleek Compact Glassy 3-Way Mode Switcher Pill ----
           const _ModeSwitchBar(),
 
@@ -264,40 +288,122 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
           Expanded(
             child: !inputEnabled
-                ? EmptyState(
-                    icon: AppIcons.key,
-                    title: 'No AI provider yet',
-                    message: 'PocketStrike needs at least one provider '
-                        'to chat. Add OpenAI, Claude, Gemini, Groq, '
-                        'OpenRouter or Ollama — or switch to Local mode.',
-                    actionLabel: 'Add a provider',
-                    onAction: () => context.push(AppRoutes.settingsProviders),
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(AppIcons.sparkles, size: 38, color: tokens.accent),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'Sarathi AI',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Connect an AI provider to begin chatting or switch to Local mode above.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: tokens.textSecondary, fontSize: 13),
+                          ),
+                          const SizedBox(height: 16),
+                          OutlinedButton.icon(
+                            icon: const Icon(AppIcons.plus, size: 16),
+                            label: const Text('Add Provider'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: tokens.accent,
+                              side: BorderSide(color: tokens.accent),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            onPressed: () => context.push(AppRoutes.settingsProviders),
+                          ),
+                        ],
+                      ),
+                    ),
                   )
                 : (messages.isEmpty && chatState.streamingText.isEmpty)
-                    ? EmptyState(
-                        icon: chatState.localMode
-                            ? (activeLocal?.type == LocalModelType.imageModel
-                                ? AppIcons.image
-                                : AppIcons.cpu)
-                            : (chatState.agentMode ? AppIcons.bot : AppIcons.messageSquare),
-                        title: chatState.localMode
-                            ? (activeLocal?.type == LocalModelType.imageModel
-                                ? 'Offline Image Generation'
-                                : '100% Offline Local AI')
-                            : (chatState.agentMode ? 'Autonomous Agent' : 'Start a conversation'),
-                        message: chatState.localMode
-                            ? (activeLocal != null
-                                ? (activeLocal.isLoadedInRam
-                                    ? '🟢 Loaded in RAM: ${activeLocal.name} (${activeLocal.type == LocalModelType.imageModel ? "${activeLocal.steps} steps" : activeLocal.quantization}, ${activeLocal.formattedRamUsage}). Ready to run!'
-                                    : '⚪ ${activeLocal.name} is not loaded in RAM yet. Tap above to load it into memory.')
-                                : 'Import and load a .gguf or image model to run on-device.')
-                            : (chatState.agentMode
-                                ? 'Agent mode is ON — the model can plan and execute tools step by step.'
-                                : 'Ask anything. Switch between Chat, Agent & Local mode above.'),
-                        actionLabel: chatState.localMode ? 'Manage Local Models' : null,
-                        onAction: chatState.localMode
-                            ? () => context.push(AppRoutes.settingsLocalModels)
-                            : null,
+                    ? SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 12),
+                            Container(
+                              width: 58,
+                              height: 58,
+                              decoration: BoxDecoration(
+                                color: tokens.accent.withValues(alpha: 0.12),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: tokens.accent.withValues(alpha: 0.3),
+                                  width: 1.0,
+                                ),
+                              ),
+                              child: Icon(
+                                chatState.localMode
+                                    ? (activeLocal?.type == LocalModelType.imageModel
+                                        ? AppIcons.image
+                                        : AppIcons.cpu)
+                                    : (chatState.agentMode ? AppIcons.bot : AppIcons.sparkles),
+                                size: 26,
+                                color: tokens.accent,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              chatState.localMode
+                                  ? (activeLocal != null ? activeLocal.name : '100% Offline Local AI')
+                                  : (chatState.agentMode ? 'Autonomous Agent' : 'Welcome to Sarathi'),
+                              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              chatState.localMode
+                                  ? (activeLocal != null
+                                      ? (activeLocal.isLoadedInRam
+                                          ? '🟢 Active in RAM: ${activeLocal.formattedRamUsage} · Zero latency, fully private.'
+                                          : '⚪ ${activeLocal.name} is ready. Tap to load into RAM or chat.')
+                                      : 'Import and run on-device GGUF intelligence.')
+                                  : (chatState.agentMode
+                                      ? 'Autonomous tool loop: web search, math, files, and background workflows.'
+                                      : 'Fast, multi-modal intelligence with on-device privacy.'),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: tokens.textSecondary, fontSize: 12),
+                            ),
+                            const SizedBox(height: 18),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              alignment: WrapAlignment.center,
+                              children: [
+                                _PromptPill(
+                                  icon: '💡',
+                                  label: 'Explain quantum computing simply',
+                                  onTap: () => ref.read(chatControllerProvider.notifier).sendMessage(text: 'Explain quantum computing simply in plain English.'),
+                                ),
+                                _PromptPill(
+                                  icon: '🎨',
+                                  label: 'Create an image of cyberpunk city',
+                                  onTap: () => ref.read(chatControllerProvider.notifier).sendMessage(text: '/image Cyberpunk neon metropolis floating in rain'),
+                                ),
+                                _PromptPill(
+                                  icon: '🐍',
+                                  label: 'Write a Python web scraper',
+                                  onTap: () => ref.read(chatControllerProvider.notifier).sendMessage(text: 'Write a clean Python script using beautifulsoup to scrape headlines.'),
+                                ),
+                                _PromptPill(
+                                  icon: '⚡',
+                                  label: 'Check device RAM & specs',
+                                  onTap: () => ref.read(chatControllerProvider.notifier).sendMessage(text: 'Analyze system hardware specs and optimal model configurations.'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       )
                     : Stack(
                         children: [
@@ -384,7 +490,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       ),
           ),
           ChatInputBar(enabled: inputEnabled),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -537,10 +644,13 @@ class _LocalModelStatusBanner extends StatelessWidget {
 
                 // Model Name & Role
                 Expanded(
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: Text(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
                           model?.name ?? 'No Model Loaded',
                           style: TextStyle(
                             fontSize: 11.5,
@@ -548,50 +658,49 @@ class _LocalModelStatusBanner extends StatelessWidget {
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                           maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 5,
-                          vertical: 1.5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: tokens.glassBorder.withValues(alpha: 0.4),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          isImage ? '🎨 Image' : '💬 Chat',
-                          style: TextStyle(
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w600,
-                            color: tokens.textSecondary,
-                          ),
-                        ),
-                      ),
-                      if (isLoaded) ...[
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 5,
                             vertical: 1.5,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF10B981).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(4),
+                            color: tokens.glassBorder.withValues(alpha: 0.4),
+                            borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            model!.formattedRamUsage,
-                            style: const TextStyle(
+                            model?.categoryBadge ?? (isImage ? '🎨 Image' : '💬 Chat'),
+                            style: TextStyle(
                               fontSize: 9.5,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF10B981),
+                              fontWeight: FontWeight.w600,
+                              color: tokens.textSecondary,
                             ),
                           ),
                         ),
+                        if (isLoaded) ...[
+                          const SizedBox(width: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 5,
+                              vertical: 1.5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              model!.formattedRamUsage,
+                              style: const TextStyle(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF10B981),
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
 
@@ -1076,3 +1185,53 @@ class _ImageGenerationLoadingCardState
 }
 
 
+
+class _PromptPill extends StatelessWidget {
+  const _PromptPill({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final String icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.glass;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap();
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: tokens.glassColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: tokens.glassBorder, width: 0.8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(icon, style: const TextStyle(fontSize: 14)),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -1,15 +1,16 @@
+import 'package:sarathi/core/localization/language_provider.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/app_theme.dart';
-import 'package:pocketstrike/app/theme/glass_tokens.dart';
-import 'package:pocketstrike/core/db/app_database.dart' show Message;
-import 'package:pocketstrike/core/models/chat_models.dart';
-import 'package:pocketstrike/shared/widgets/app_icons.dart';
-import 'package:pocketstrike/features/chat/application/chat_controller.dart';
-import 'package:pocketstrike/features/chat/ui/widgets/markdown_message.dart';
+import 'package:sarathi/app/theme/app_theme.dart';
+import 'package:sarathi/app/theme/glass_tokens.dart';
+import 'package:sarathi/core/db/app_database.dart' show Message;
+import 'package:sarathi/core/models/chat_models.dart';
+import 'package:sarathi/shared/widgets/app_icons.dart';
+import 'package:sarathi/features/chat/application/chat_controller.dart';
+import 'package:sarathi/features/chat/ui/widgets/markdown_message.dart';
 
 /// Modern chat bubble with executive assistant responses, top 3-dot tool inspector,
 /// interactive tool badges, and tight user sizing (Hermes / OpenClaw style).
@@ -121,7 +122,7 @@ class MessageBubble extends ConsumerWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'Strike',
+                        ref.watch(currentAppNameProvider),
                         style: TextStyle(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
@@ -285,21 +286,25 @@ class MessageBubble extends ConsumerWidget {
     final newText = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Edit message'),
+        title: Text(ref.t('editMessage')),
         content: TextField(
           controller: controller,
           maxLines: null,
           autofocus: true,
-          decoration: const InputDecoration(border: OutlineInputBorder()),
+          style: const TextStyle(fontSize: 13.5),
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintStyle: TextStyle(fontSize: 12),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text(ref.t('cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, controller.text),
-            child: const Text('Send'),
+            child: Text(ref.t('send')),
           ),
         ],
       ),

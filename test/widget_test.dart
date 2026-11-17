@@ -2,13 +2,13 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pocketstrike/app/app.dart';
-import 'package:pocketstrike/core/db/app_database.dart';
-import 'package:pocketstrike/core/storage/prefs_provider.dart';
-import 'package:pocketstrike/features/agent/data/cron_task_store.dart';
-import 'package:pocketstrike/features/mcp/application/mcp_controller.dart';
-import 'package:pocketstrike/features/mcp/data/mcp_connection_manager.dart';
-import 'package:pocketstrike/features/telegram/telegram_service.dart';
+import 'package:sarathi/app/app.dart';
+import 'package:sarathi/core/db/app_database.dart';
+import 'package:sarathi/core/storage/prefs_provider.dart';
+import 'package:sarathi/features/agent/data/cron_task_store.dart';
+import 'package:sarathi/features/mcp/application/mcp_controller.dart';
+import 'package:sarathi/features/mcp/data/mcp_connection_manager.dart';
+import 'package:sarathi/features/telegram/telegram_service.dart';
 
 class MockTelegramNotifier extends TelegramServiceNotifier {
   @override
@@ -39,9 +39,11 @@ class MockCronTaskNotifier extends CronTaskNotifier {
 }
 
 void main() {
-  testWidgets('PocketStrike app renders successfully', (WidgetTester tester) async {
+  testWidgets('Sarathi app renders successfully', (WidgetTester tester) async {
     SharedPreferences.setMockInitialValues({
       'onboarding_done': true,
+      'app_language': 'en',
+      'tutorial_seen': true,
       'telegram_bridge_enabled': false,
     });
     final prefs = await SharedPreferences.getInstance();
@@ -64,11 +66,13 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const PocketStrikeApp(),
+        child: const SarathiApp(),
       ),
     );
 
     await tester.pump();
-    expect(find.byType(PocketStrikeApp), findsOneWidget);
+    expect(find.byType(SarathiApp), findsOneWidget);
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pumpAndSettle();
   });
 }

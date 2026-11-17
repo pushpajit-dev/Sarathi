@@ -4,10 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pocketstrike/core/services/notification_service.dart';
-import 'package:pocketstrike/core/storage/prefs_provider.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_engine.dart';
-import 'package:pocketstrike/features/local_models/data/local_model_info.dart';
+import 'package:sarathi/core/services/notification_service.dart';
+import 'package:sarathi/core/storage/prefs_provider.dart';
+import 'package:sarathi/features/local_models/data/local_model_engine.dart';
+import 'package:sarathi/features/local_models/data/local_model_info.dart';
 import 'package:uuid/uuid.dart';
 
 class LocalModelState {
@@ -136,31 +136,31 @@ class LocalModelStoreNotifier extends Notifier<LocalModelState> {
           importedAt: DateTime.now(),
         ),
 
+        // ==================== 💬 STANDARD CHAT & REASONING SLMS ====================
         LocalModelInfo(
-          id: 'preset_llama_1b_uncensored',
-          name: 'abliterated-llama-3.2-1b-instruct-q4_k_m.gguf',
-          filePath: '/storage/emulated/0/Download/abliterated-llama-3.2-1b-instruct-q4_k_m.gguf',
-          downloadUrl: 'https://huggingface.co/ElectricLMA/Abliterated-Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/abliterated-llama-3.2-1b-instruct-q4_k_m.gguf',
-          fileSizeBytes: 807690720, // ~770 MB
-          type: LocalModelType.uncensoredGguf,
+          id: 'preset_smollm2_135m_chat',
+          name: 'SmolLM2-135M-Instruct-Q4_K_M.gguf',
+          filePath: '/storage/emulated/0/Download/SmolLM2-135M-Instruct-Q4_K_M.gguf',
+          downloadUrl: 'https://huggingface.co/bartowski/SmolLM2-135M-Instruct-GGUF/resolve/main/SmolLM2-135M-Instruct-Q4_K_M.gguf',
+          fileSizeBytes: 105455104, // ~100 MB
+          type: LocalModelType.chatGguf,
           quantization: 'Q4_K_M',
           isLoadedInRam: false,
-          ramUsageMb: 950,
+          ramUsageMb: 140,
           contextSize: 2048,
           threads: 4,
           gpuLayers: 0,
-          description: '🔥 Abliterated Meta Llama 3.2 1B. Fully uncensored instruction-following and creative tasks.',
+          description: 'Ultra-lightweight 135M chat model. Instant responses on any Android phone.',
           isDefault: false,
           importedAt: DateTime.now(),
         ),
 
-        // ==================== 💬 STANDARD CHAT & REASONING SLMS ====================
         LocalModelInfo(
           id: 'preset_qwen25_05b',
           name: 'qwen2.5-0.5b-instruct-q4_k_m.gguf',
           filePath: '/storage/emulated/0/Download/qwen2.5-0.5b-instruct-q4_k_m.gguf',
           downloadUrl: 'https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf',
-          fileSizeBytes: 491400032, // ~468 MB
+          fileSizeBytes: 491400032, // ~397 MB
           type: LocalModelType.chatGguf,
           quantization: 'Q4_K_M',
           isLoadedInRam: false,
@@ -191,60 +191,80 @@ class LocalModelStoreNotifier extends Notifier<LocalModelState> {
           importedAt: DateTime.now(),
         ),
 
+        // ==================== 🎨 REAL IMAGE GENERATION MODEL ====================
         LocalModelInfo(
-          id: 'preset_deepseek_r1',
-          name: 'DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M.gguf',
-          filePath: '/storage/emulated/0/Download/DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M.gguf',
-          downloadUrl: 'https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-1.5B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M.gguf',
-          fileSizeBytes: 1117320800, // ~1.06 GB
-          type: LocalModelType.chatGguf,
-          quantization: 'Q4_K_M',
-          isLoadedInRam: false,
-          ramUsageMb: 1420,
-          contextSize: 2048,
-          threads: 4,
-          gpuLayers: 0,
-          description: 'Open reasoning model distilled with deep chain-of-thought logic.',
-          isDefault: false,
-          importedAt: DateTime.now(),
-        ),
-
-        LocalModelInfo(
-          id: 'preset_llama_32',
-          name: 'Llama-3.2-3B-Instruct-Q4_K_M.gguf',
-          filePath: '/storage/emulated/0/Download/Llama-3.2-3B-Instruct-Q4_K_M.gguf',
-          downloadUrl: 'https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF/resolve/main/Llama-3.2-3B-Instruct-Q4_K_M.gguf',
-          fileSizeBytes: 2013265920, // ~1.9 GB
-          type: LocalModelType.chatGguf,
-          quantization: 'Q4_K_M',
-          isLoadedInRam: false,
-          ramUsageMb: 2350,
-          contextSize: 2048,
-          threads: 4,
-          gpuLayers: 0,
-          description: 'Full 3B powerhouse for advanced reasoning, creative prose, and tool execution.',
-          isDefault: false,
-          importedAt: DateTime.now(),
-        ),
-
-        // ==================== 🎨 IMAGE GENERATION MODEL ====================
-        LocalModelInfo(
-          id: 'preset_sd_turbo',
-          name: 'SD-Turbo-Image-Gen.gguf',
-          filePath: '/storage/emulated/0/Download/SD-Turbo-Image-Gen.gguf',
+          id: 'preset_sd15_gguf',
+          name: 'stable-diffusion-v1-5-Q4_0.gguf',
+          filePath: '/storage/emulated/0/Download/stable-diffusion-v1-5-Q4_0.gguf',
+          downloadUrl: 'https://huggingface.co/second-state/stable-diffusion-v1-5-GGUF/resolve/main/stable-diffusion-v1-5-Q4_0.gguf',
           fileSizeBytes: 1717986918,
           type: LocalModelType.imageModel,
-          quantization: 'FP16',
+          quantization: 'Q4_0',
           isLoadedInRam: false,
-          ramUsageMb: 1800,
+          ramUsageMb: 1600,
           contextSize: 512,
           threads: 4,
           gpuLayers: 0,
-          description: 'Neural image generator for on-device and local procedural image synthesis.',
+          description: 'Neural image diffusion checkpoint for 512x512 on-device image synthesis.',
           isDefault: false,
           importedAt: DateTime.now(),
         ),
-      ];
+
+        // ==================== 🎬 REAL VIDEO GENERATION MODEL ====================
+        LocalModelInfo(
+          id: 'preset_animatediff_video',
+          name: 'AnimateDiff-Lightning-4step.safetensors',
+          filePath: '/storage/emulated/0/Download/animatediff_lightning_4step_diffusers.safetensors',
+          downloadUrl: 'https://huggingface.co/ByteDance/AnimateDiff-Lightning/resolve/main/animatediff_lightning_4step_diffusers.safetensors',
+          fileSizeBytes: 1845493760, // ~1.8 GB
+          type: LocalModelType.videoModel,
+          quantization: 'FP16',
+          isLoadedInRam: false,
+          ramUsageMb: 2400,
+          contextSize: 512,
+          threads: 4,
+          gpuLayers: 0,
+          description: '🎬 Fast 4-step motion video diffusion generator. Produces smooth animated MP4 sequences.',
+          isDefault: false,
+          importedAt: DateTime.now(),
+        ),
+
+        // ==================== 🎙️ REAL AUDIO & SPEECH MODELS ====================
+        LocalModelInfo(
+          id: 'preset_whisper_tiny_audio',
+          name: 'ggml-tiny.bin',
+          filePath: '/storage/emulated/0/Download/ggml-tiny.bin',
+          downloadUrl: 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin',
+          fileSizeBytes: 77762688, // ~75 MB
+          type: LocalModelType.audioModel,
+          quantization: 'FP16',
+          isLoadedInRam: false,
+          ramUsageMb: 220,
+          contextSize: 1024,
+          threads: 4,
+          gpuLayers: 0,
+          description: '🎙️ Official Whisper Tiny (75MB). Fast on-device speech transcription & voice synthesis.',
+          isDefault: false,
+          importedAt: DateTime.now(),
+        ),
+
+        LocalModelInfo(
+          id: 'preset_whisper_base_audio',
+          name: 'ggml-base.bin',
+          filePath: '/storage/emulated/0/Download/ggml-base.bin',
+          downloadUrl: 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin',
+          fileSizeBytes: 147964211, // ~142 MB
+          type: LocalModelType.audioModel,
+          quantization: 'FP16',
+          isLoadedInRam: false,
+          ramUsageMb: 450,
+          contextSize: 1024,
+          threads: 4,
+          gpuLayers: 0,
+          description: '🎙️ Whisper Base model. Accurate multilingual speech recognition & voice audio processing.',
+          isDefault: false,
+          importedAt: DateTime.now(),
+        ),      ];
 
   @override
   LocalModelState build() {
@@ -474,7 +494,7 @@ class LocalModelStoreNotifier extends Notifier<LocalModelState> {
             lastNotifUpdate = now;
             notifService.showDownloadProgress(
               id: notifId,
-              title: 'PocketStrike: Downloading ${model.name}',
+              title: 'Sarathi: Downloading ${model.name}',
               body: statusStr,
               progress: (progress * 100).toInt(),
               maxProgress: 100,

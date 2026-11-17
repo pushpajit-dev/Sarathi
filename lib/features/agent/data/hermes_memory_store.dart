@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/core/storage/prefs_provider.dart';
-import 'package:pocketstrike/features/agent/domain/agent_tool.dart';
+import 'package:sarathi/core/storage/prefs_provider.dart';
+import 'package:sarathi/features/agent/domain/agent_tool.dart';
 
 /// Hermes Self-Evolving Data Store (USER.md, MEMORY.md, SOUL.md).
 class HermesMemoryState {
@@ -61,7 +61,7 @@ class HermesMemoryNotifier extends Notifier<HermesMemoryState> {
     var memoryMd = prefs.getString(_kMemoryBaseKey);
     if (memoryMd == null || memoryMd.contains('macOS developer workstation')) {
       memoryMd = '# LONG-TERM MEMORY & KNOWLEDGE\n'
-          '• Client: PocketStrike AI Mobile Workstation.\n'
+          '• Client: Sarathi AI Mobile Workstation.\n'
           '• Notes: Ready to learn facts and context provided by the user.\n';
       prefs.setString(_kMemoryBaseKey, memoryMd);
     }
@@ -69,7 +69,7 @@ class HermesMemoryNotifier extends Notifier<HermesMemoryState> {
     var soulMd = prefs.getString(_kAgentSoulKey);
     if (soulMd == null || soulMd.contains('Creator & Developer: Created and built by Mohd Abuzar.')) {
       soulMd = '# POCKETSTRIKE AGENT SOUL & IDENTITY\n'
-          '• Core Identity: PocketStrike AI - Autonomous Mobile AI Assistant.\n'
+          '• Core Identity: Sarathi AI - Autonomous Mobile AI Assistant.\n'
           '• Tone: Adaptive, intelligent, sharp, polite, and helpful.\n'
           '• Purpose: Assist the current user with tasks, answer questions accurately, and adapt to their workflow.\n'
           '• Origin: Developed by Mohd Abuzar.\n';
@@ -134,10 +134,10 @@ class HermesMemoryNotifier extends Notifier<HermesMemoryState> {
         '• Status: Learning user preferences dynamically through conversation.\n'
         '• Communication Style: Helpful, clear, polite, and adaptive.\n';
     const memoryMd = '# LONG-TERM MEMORY & KNOWLEDGE\n'
-        '• Client: PocketStrike AI Mobile Workstation.\n'
+        '• Client: Sarathi AI Mobile Workstation.\n'
         '• Notes: Ready to learn facts and context provided by the user.\n';
     const soulMd = '# POCKETSTRIKE AGENT SOUL & IDENTITY\n'
-        '• Core Identity: PocketStrike AI - Autonomous Mobile AI Assistant.\n'
+        '• Core Identity: Sarathi AI - Autonomous Mobile AI Assistant.\n'
         '• Tone: Adaptive, intelligent, sharp, polite, and helpful.\n'
         '• Purpose: Assist the current user with tasks, answer questions accurately, and adapt to their workflow.\n'
         '• Origin: Developed by Mohd Abuzar.\n';
@@ -154,14 +154,14 @@ class HermesMemoryNotifier extends Notifier<HermesMemoryState> {
     );
   }
 
-  /// Generates the unified PocketStrike System Prompt context.
+  /// Generates the unified Sarathi System Prompt context.
   String buildHermesSystemPrompt() {
     return '''
 ==================================================
 POCKETSTRIKE SYSTEM CONTEXT & IDENTITY
 ==================================================
-IDENTITY: You are PocketStrike AI, an intelligent mobile AI assistant and autonomous agent workstation.
-CREATOR ATTRIBUTION: PocketStrike was created and developed by Mohd Abuzar. If asked "Who built you?" or "Who created you?", state that PocketStrike was created by Mohd Abuzar.
+IDENTITY: You are Sarathi AI, an intelligent mobile AI assistant and autonomous agent workstation.
+CREATOR ATTRIBUTION: Sarathi was created and developed by Mohd Abuzar. If asked "Who built you?" or "Who created you?", state that Sarathi was created by Mohd Abuzar.
 
 CRITICAL USER DISTINCTION:
 - The person chatting with you right now is the END USER of the app.

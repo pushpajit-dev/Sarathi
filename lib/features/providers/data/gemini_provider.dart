@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -147,11 +148,42 @@ class GeminiProvider implements AIProvider {
         case MessageRole.system:
           break;
         case MessageRole.user:
+          final parts = <Map<String, dynamic>>[];
+          for (final att in m.attachments) {
+            try {
+              final file = File(att.path);
+              if (file.existsSync()) {
+                if (att.isImage || att.isAudio || att.isPdf) {
+                  final bytes = file.readAsBytesSync();
+                  final b64 = base64Encode(bytes);
+                  var mime = att.mimeType;
+                  if (mime.startsWith('image/jpg')) mime = 'image/jpeg';
+                  parts.add({
+                    'inlineData': {
+                      'mimeType': mime,
+                      'data': b64,
+                    },
+                  });
+                } else {
+                  final text = file.readAsStringSync();
+                  final truncated =
+                      text.length > 400000 ? text.substring(0, 400000) : text;
+                  parts.add({
+                    'text':
+                        '--- Attached Document: ${att.name} ---\n$truncated\n--- End of ${att.name} ---',
+                  });
+                }
+              }
+            } catch (_) {}
+          }
+          if (m.content.isNotEmpty) {
+            parts.add({'text': m.content});
+          } else if (parts.isEmpty) {
+            parts.add({'text': ''});
+          }
           out.add({
             'role': 'user',
-            'parts': [
-              {'text': m.content},
-            ],
+            'parts': parts,
           });
         case MessageRole.assistant:
           out.add({

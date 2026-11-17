@@ -1,3 +1,4 @@
+import '../../core/localization/language_provider.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -135,7 +136,7 @@ class ConfirmActionSheet extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: const Text('Deny'),
+                  child: Text(context.t('deny')),
                 ),
               ),
               const SizedBox(width: 10),
@@ -152,7 +153,7 @@ class ConfirmActionSheet extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    child: const Text('Always'),
+                    child: Text(context.t('always')),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -171,7 +172,7 @@ class ConfirmActionSheet extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: const Text('Allow'),
+                  child: Text(context.t('allow')),
                 ),
               ),
             ],

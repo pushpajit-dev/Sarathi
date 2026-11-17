@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.pocketstrike.pocketstrike"
+    namespace = "com.noishixzen.sarathi"
     compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
@@ -16,11 +16,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.pocketstrike.pocketstrike"
+        applicationId = "com.noishixzen.sarathi"
         minSdk = 26
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        versionCode = 51
+        versionName = "5.1"
     }
 
     buildTypes {

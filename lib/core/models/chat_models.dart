@@ -52,6 +52,15 @@ class AttachmentMeta {
   final int? sizeBytes;
 
   bool get isImage => mimeType.startsWith('image/');
+  bool get isAudio => mimeType.startsWith('audio/');
+  bool get isVideo => mimeType.startsWith('video/');
+  bool get isPdf => mimeType == 'application/pdf';
+  bool get isTextDocument =>
+      mimeType.startsWith('text/') ||
+      mimeType == 'application/json' ||
+      mimeType == 'application/csv' ||
+      mimeType.contains('xml') ||
+      mimeType.contains('yaml');
 
   Map<String, dynamic> toJson() => {
         'name': name,

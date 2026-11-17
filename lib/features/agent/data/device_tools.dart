@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:pocketstrike/features/agent/domain/agent_tool.dart';
+import 'package:sarathi/features/agent/domain/agent_tool.dart';
 
 /// Built-in Device Hardware & System Tools (Clipboard, Device Specs, System Info).
 class DeviceAgentTools {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketstrike/app/theme/app_theme.dart';
-import 'package:pocketstrike/features/gallery/application/gallery_controller.dart';
-import 'package:pocketstrike/features/gallery/data/gallery_item.dart';
-import 'package:pocketstrike/features/gallery/ui/gallery_screen.dart';
+import 'package:sarathi/app/theme/app_theme.dart';
+import 'package:sarathi/features/gallery/application/gallery_controller.dart';
+import 'package:sarathi/features/gallery/data/gallery_item.dart';
+import 'package:sarathi/features/gallery/ui/gallery_screen.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

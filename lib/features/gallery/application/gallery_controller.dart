@@ -4,9 +4,9 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pocketstrike/features/gallery/data/gallery_item.dart';
+import 'package:sarathi/features/gallery/data/gallery_item.dart';
 
-const _galleryChannel = MethodChannel('com.pocketstrike.app/gallery');
+const _galleryChannel = MethodChannel('com.noishixzen.sarathi/gallery');
 
 final galleryControllerProvider =
     StateNotifierProvider<GalleryController, AsyncValue<List<GalleryItem>>>((ref) {
@@ -42,7 +42,7 @@ class GalleryController extends StateNotifier<AsyncValue<List<GalleryItem>>> {
                   final stat = f.statSync();
                   final fileName = f.uri.pathSegments.last;
                   final isSavedToPhone = File(
-                          '/storage/emulated/0/Pictures/PocketStrike/$fileName')
+                          '/storage/emulated/0/Pictures/Sarathi/$fileName')
                       .existsSync();
                   items.add(GalleryItem(
                     filePath: f.path,
@@ -69,7 +69,7 @@ class GalleryController extends StateNotifier<AsyncValue<List<GalleryItem>>> {
     }
   }
 
-  /// Saves the image file into Android MediaStore (Pictures/PocketStrike)
+  /// Saves the image file into Android MediaStore (Pictures/Sarathi)
   Future<bool> saveToPhoneGallery(GalleryItem item) async {
     try {
       final file = File(item.filePath);
@@ -80,9 +80,9 @@ class GalleryController extends StateNotifier<AsyncValue<List<GalleryItem>>> {
         'saveImageToGallery',
         {
           'bytes': bytes,
-          'fileName': item.fileName.startsWith('PocketStrike_')
+          'fileName': item.fileName.startsWith('Sarathi_')
               ? item.fileName
-              : 'PocketStrike_${DateTime.now().millisecondsSinceEpoch}.jpg',
+              : 'Sarathi_${DateTime.now().millisecondsSinceEpoch}.jpg',
         },
       );
 
@@ -104,7 +104,7 @@ class GalleryController extends StateNotifier<AsyncValue<List<GalleryItem>>> {
         'shareImage',
         {
           'filePath': item.filePath,
-          'text': caption ?? 'Created with PocketStrike AI',
+          'text': caption ?? 'Created with Sarathi AI',
         },
       );
       return result ?? false;

@@ -16,8 +16,8 @@
 -keepclassmembers class com.write4me.** { *; }
 -keep class com.write4me.llama_flutter_android.** { *; }
 -keepclassmembers class com.write4me.llama_flutter_android.** { *; }
--keep class com.pocketstrike.** { *; }
--keepclassmembers class com.pocketstrike.** { *; }
+-keep class com.noishixzen.sarathi.** { *; }
+-keepclassmembers class com.noishixzen.sarathi.** { *; }
 
 # Keep Flutter Local Notifications & Desugaring
 -keep class com.dexterous.flutterlocalnotifications.** { *; }

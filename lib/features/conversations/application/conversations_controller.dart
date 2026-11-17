@@ -1,3 +1,4 @@
+import '../../../core/storage/prefs_provider.dart';
 import 'dart:convert';
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,9 +12,12 @@ final conversationsProvider = StreamProvider<List<Conversation>>((ref) {
   return ref.watch(appDatabaseProvider).conversationsDao.watchAll();
 });
 
-/// The conversation currently open in the chat screen (null = fresh draft).
-final currentConversationIdProvider =
-    StateProvider<String?>((ref) => null);
+/// The conversation currently open in the chat screen (persisted across app restarts).
+/// The conversation currently open in the chat screen (persisted across app restarts).
+final currentConversationIdProvider = StateProvider<String?>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return prefs.getString('last_active_conversation_id');
+});
 
 final currentConversationProvider = StreamProvider<Conversation?>((ref) {
   final id = ref.watch(currentConversationIdProvider);
@@ -62,10 +66,18 @@ class ConversationActions {
 
   Future<String> ensureActiveConversation() async {
     var id = _ref.read(currentConversationIdProvider);
-    if (id == null) {
-      id = await createConversation();
-      _ref.read(currentConversationIdProvider.notifier).state = id;
+    if (id != null) {
+      final existing = await _dao.getById(id);
+      if (existing != null) return id;
     }
+    final all = await _dao.getAll();
+    if (all.isNotEmpty) {
+      id = all.first.id;
+      _ref.read(currentConversationIdProvider.notifier).state = id;
+      return id;
+    }
+    id = await createConversation();
+    _ref.read(currentConversationIdProvider.notifier).state = id;
     return id;
   }
 

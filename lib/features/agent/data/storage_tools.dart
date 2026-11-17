@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart' as p;
-import 'package:pocketstrike/features/agent/domain/agent_tool.dart';
+import 'package:sarathi/features/agent/domain/agent_tool.dart';
 
 /// Sandboxed storage tools for agent file system operations on mobile devices.
 class StorageAgentTools {
